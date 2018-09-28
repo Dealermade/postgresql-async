@@ -141,6 +141,7 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                 }
 
                 "one take queued and receive one invalid item back" in {
+                    // TODO 'taking' future is never completed
                     val taking = pool.take
                     factory.reject += 1
                     await(pool.giveBack(1)) must throwA[IllegalStateException]
