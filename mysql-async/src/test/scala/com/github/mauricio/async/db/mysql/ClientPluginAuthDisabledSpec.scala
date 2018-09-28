@@ -46,16 +46,16 @@ class ClientPluginAuthDisabledSpec extends Specification with ConnectionHelper {
   }
 
   override def defaultConfiguration = new Configuration(
-    "root",
-    "localhost",
-    port = 3307
+    "mysql_async_nopw",
+    "127.0.0.1",
+    port = 3306
   )
 
   def vagrantConfiguration = new Configuration(
-    "mysql_vagrant",
-    "localhost",
-    port = 3307,
-    password = Some("generic_password")
+    "mysql_async",
+    "127.0.0.1",
+    port = 3306,
+    password = Some("root")
   )
 
 }
