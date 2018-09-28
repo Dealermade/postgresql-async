@@ -76,6 +76,7 @@ object Configuration {
   )
 
   val baseSettings = Defaults.defaultSettings ++ Seq(
+    scalaVersion := projectScalaVersion,
     scalacOptions :=
       Opts.compile.encoding("UTF8")
         :+ Opts.compile.deprecation
