@@ -50,7 +50,7 @@ object ProjectBuild extends Build {
 object Configuration {
 
   val commonVersion = "0.2.22-IQ.5"
-  val projectScalaVersion = "2.12.3"
+  val projectScalaVersion = "2.12.7"
   val specs2Version = "3.8.6"
 
   val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
@@ -84,7 +84,7 @@ object Configuration {
     ,
     testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "sequential"),
     scalacOptions in doc := Seq("-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
-    crossScalaVersions := Seq(projectScalaVersion, "2.10.6", "2.11.8"),
+    crossScalaVersions := Seq(projectScalaVersion, "2.10.6", "2.11.8", "2.12.7"),
     javacOptions := Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF8"),
     organization := "com.github.mauricio",
     version := commonVersion,
