@@ -1,4 +1,5 @@
-# postgresql-async & mysql-async - async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12 [![Build Status](https://travis-ci.org/Dealermade/postgresql-async.svg?branch=master)](https://travis-ci.org/Dealermade/postgresql-async)
+# postgresql-async & mysql-async [![Build Status](https://travis-ci.org/Dealermade/postgresql-async.svg?branch=master)](https://travis-ci.org/Dealermade/postgresql-async)
+### Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12
 
 The main goal for this project is to implement simple, async, performant and reliable database drivers for
 PostgreSQL and MySQL in Scala. This is not supposed to be a JDBC replacement, these drivers aim to cover the common
