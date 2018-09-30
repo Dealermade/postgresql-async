@@ -9,7 +9,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# postgresql-async - an async Netty based PostgreSQL driver written in Scala 2.10 and 2.11
+# postgresql-async - an async Netty based PostgreSQL driver written in Scala 2.12
 
 The main goal of this project is to implement a performant and fully functional async PostgreSQL driver. This project
 has no interest in JDBC, it's supposed to be a clean room implementation for people interested in talking directly
