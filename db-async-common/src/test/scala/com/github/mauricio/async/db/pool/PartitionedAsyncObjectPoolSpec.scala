@@ -126,6 +126,9 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                 "one take queued" in {
                     pool.take
 
+                    println(s"inUse: ${pool.inUse}")
+                    println(s"queued: ${pool.queued}")
+                    println(s"availables: ${pool.availables}")
                     pool.inUse.size mustEqual maxObjects
                     pool.queued.size mustEqual 1
                     pool.availables.size mustEqual 0
