@@ -7,11 +7,11 @@ jdk:
 
 sudo: required
 
+env:
+  - DOCKER_COMPOSE_VERSION=1.22.0
+
 services:
   - docker
-
-env:
-  - DOCKER_COMPOSE_VERSION=1.15.0
 
 cache:
   directories:
