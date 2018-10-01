@@ -16,7 +16,7 @@ class PartitionedAsyncObjectPool[T](
 
     import ExecutorServiceUtils.CachedExecutionContext
 
-    private val pools =
+    protected val pools =
         (0 until numberOfPartitions)
             .map(_ -> new SingleThreadedAsyncObjectPool(factory, partitionConfig))
             .toMap
@@ -56,7 +56,7 @@ class PartitionedAsyncObjectPool[T](
     protected def isClosed =
         pools.values.forall(_.isClosed)
 
-    private def currentPool =
+    protected def currentPool =
         pools(currentThreadAffinity)
 
     private def currentThreadAffinity =

@@ -39,7 +39,9 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
             }
     }
 
-    val pool = new PartitionedAsyncObjectPool(factory, config, 2)
+    val pool = new PartitionedAsyncObjectPool(factory, config, 2) {
+        override protected def currentPool: SingleThreadedAsyncObjectPool[Int] = pools(0)
+    }
     def maxObjects = config.maxObjects / 2
     def maxIdle = config.maxIdle / 2
     def maxQueueSize = config.maxQueueSize / 2
