@@ -27,15 +27,10 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - brew update
-  - brew install sbt
 
 before_script:
   - docker-compose build
-  - docker-compose up
-
-script:
-  - sbt test
+  - docker-compose up -d
 
 after_script:
   - docker-compose down
