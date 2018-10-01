@@ -134,16 +134,16 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                     pool.availables.size mustEqual 0
                 }
 
-//                "one take queued and receive one item back" in {
-//                    val taking = pool.take
-//
-//                    await(pool.giveBack(1))
-//
-//                    await(taking) mustEqual 1
-//                    pool.inUse.size mustEqual maxObjects
-//                    pool.queued.size mustEqual 0
-//                    pool.availables.size mustEqual 0
-//                }
+                "one take queued and receive one item back" in {
+                    val taking = pool.take
+
+                    await(pool.giveBack(1))
+
+                    await(taking) mustEqual 1
+                    pool.inUse.size mustEqual maxObjects
+                    pool.queued.size mustEqual 0
+                    pool.availables.size mustEqual 0
+                }
 //
 //                "one take queued and receive one invalid item back" in {
 //                    // TODO 'taking' future is never completed
