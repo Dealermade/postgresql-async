@@ -1,9 +1,11 @@
 package com.github.mauricio.async.db.pool
 
 import scala.concurrent.Future
-import com.github.mauricio.async.db.util.ExecutorServiceUtils
+import com.github.mauricio.async.db.util.{ExecutorServiceUtils, Worker}
+
 import scala.concurrent.Promise
 import java.util.concurrent.ConcurrentHashMap
+
 import scala.util.Success
 import scala.util.Failure
 
@@ -11,14 +13,15 @@ class PartitionedAsyncObjectPool[T](
     factory: ObjectFactory[T],
     configuration: PoolConfiguration,
     numberOfPartitions: Int,
-    connectionPoolListener: Option[ConnectionPoolListener] = None)
+    connectionPoolListener: Option[ConnectionPoolListener] = None,
+    workerFactory: () => Worker = () => Worker())
     extends AsyncObjectPool[T] {
 
     import ExecutorServiceUtils.CachedExecutionContext
 
     protected val pools =
         (0 until numberOfPartitions)
-            .map(_ -> new SingleThreadedAsyncObjectPool(factory, partitionConfig))
+            .map(_ -> new SingleThreadedAsyncObjectPool(factory, partitionConfig, workerFactory()))
             .toMap
 
     private val checkouts = new ConcurrentHashMap[T, SingleThreadedAsyncObjectPool[T]]

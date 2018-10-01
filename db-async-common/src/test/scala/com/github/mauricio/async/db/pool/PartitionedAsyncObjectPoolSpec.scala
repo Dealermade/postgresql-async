@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import org.specs2.mutable.SpecificationWithJUnit
 
 import language.reflectiveCalls
-import com.github.mauricio.async.db.util.ExecutorServiceUtils
+import com.github.mauricio.async.db.util.{CallingThreadExecutorService, ExecutorServiceUtils, ExecutorServiceWrapper, Worker}
 
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
@@ -44,7 +44,9 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                     else item
                 }
         }
-        val pool = new PartitionedAsyncObjectPool(factory, config, 2) {
+
+        private val workerFactory = () => Worker(new ExecutorServiceWrapper()(new CallingThreadExecutorService()))
+        val pool = new PartitionedAsyncObjectPool(factory, config, 2, workerFactory = workerFactory) {
             override protected def currentPool: SingleThreadedAsyncObjectPool[Int] = pools(0)
         }
 
@@ -136,9 +138,6 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                     takeAndWait(maxObjects)
                     pool.take
 
-                    println(s"inUse: ${pool.inUse}")
-                    println(s"queued: ${pool.queued}")
-                    println(s"availables: ${pool.availables}")
                     pool.inUse.size mustEqual maxObjects
                     pool.queued.size mustEqual 1
                     pool.availables.size mustEqual 0
@@ -173,6 +172,10 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                     for (_ <- 0 until maxQueueSize)
                         pool.take
 
+                    println(s"inUse: ${pool.inUse.size}")
+                    println(s"queued: ${pool.queued.size}")
+                    println(s"availables: ${pool.availables.size}")
+                    Thread.sleep(100)
                     pool.inUse.size mustEqual maxObjects
                     pool.queued.size mustEqual maxQueueSize
                     pool.availables.size mustEqual 0
@@ -253,6 +256,7 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                     for (i <- 1 to maxQueueSize)
                         await(pool.giveBack(i))
 
+                    Thread.sleep(100)
                     pool.inUse.size mustEqual maxObjects
                     pool.queued.size mustEqual 0
                     pool.availables.size mustEqual 0
@@ -268,6 +272,7 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                         await(pool.giveBack(i)) must throwA[IllegalStateException]
                     }
 
+                    Thread.sleep(100)
                     pool.inUse.size mustEqual maxObjects - maxQueueSize
                     pool.queued.size mustEqual maxQueueSize
                     pool.availables.size mustEqual 0
