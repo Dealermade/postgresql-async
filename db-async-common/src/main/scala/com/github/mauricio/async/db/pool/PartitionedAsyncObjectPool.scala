@@ -13,15 +13,14 @@ class PartitionedAsyncObjectPool[T](
     factory: ObjectFactory[T],
     configuration: PoolConfiguration,
     numberOfPartitions: Int,
-    connectionPoolListener: Option[ConnectionPoolListener] = None,
-    workerFactory: () => Worker = () => Worker())
+    connectionPoolListener: Option[ConnectionPoolListener] = None)
     extends AsyncObjectPool[T] {
 
     import ExecutorServiceUtils.CachedExecutionContext
 
     protected val pools =
         (0 until numberOfPartitions)
-            .map(_ -> new SingleThreadedAsyncObjectPool(factory, partitionConfig, workerFactory()))
+            .map(_ -> new SingleThreadedAsyncObjectPool(factory, partitionConfig, createWorker()))
             .toMap
 
     private val checkouts = new ConcurrentHashMap[T, SingleThreadedAsyncObjectPool[T]]
@@ -61,6 +60,9 @@ class PartitionedAsyncObjectPool[T](
 
     protected def currentPool =
         pools(currentThreadAffinity)
+
+    protected def createWorker(): Worker =
+        Worker()
 
     private def currentThreadAffinity =
         (Thread.currentThread.getId % numberOfPartitions).toInt

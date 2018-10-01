@@ -11,7 +11,7 @@ import scala.concurrent.Future
 import org.specs2.mutable.SpecificationWithJUnit
 
 import language.reflectiveCalls
-import com.github.mauricio.async.db.util.{CallingThreadExecutorService, ExecutorServiceUtils, ExecutorServiceWrapper, Worker}
+import com.github.mauricio.async.db.util.{CallingThreadExecutionContext, ExecutorServiceWrapper, Worker}
 
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
@@ -45,8 +45,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                 }
         }
 
-        private val workerFactory = () => Worker(new ExecutorServiceWrapper()(new CallingThreadExecutorService()))
-        val pool = new PartitionedAsyncObjectPool(factory, config, 2, workerFactory = workerFactory) {
+        val pool = new PartitionedAsyncObjectPool(factory, config, 2) {
+            override protected def createWorker(): Worker = Worker(new ExecutorServiceWrapper()(new CallingThreadExecutionContext()))
             override protected def currentPool: SingleThreadedAsyncObjectPool[Int] = pools(0)
         }
 
