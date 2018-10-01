@@ -48,74 +48,74 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
 
     "pool contents" >> {
 
-//        "before exceed maxObjects" >> {
-//
-//            "take one element" in {
-//                takeAndWait(1)
-//
-//                pool.inUse.size mustEqual 1
-//                pool.queued.size mustEqual 0
-//                pool.availables.size mustEqual 0
-//            }
-//
-//            "take one element and return it invalid" in {
-//                takeAndWait(1)
-//                factory.reject += 1
-//
-//                await(pool.giveBack(1)) must throwA[IllegalStateException]
-//
-//                pool.inUse.size mustEqual 0
-//                pool.queued.size mustEqual 0
-//                pool.availables.size mustEqual 0
-//            }
-//
-//            "take one failed element" in {
-//                factory.failCreate = true
-//                takeAndWait(1) must throwA[IllegalStateException]
-//
-//                pool.inUse.size mustEqual 0
-//                pool.queued.size mustEqual 0
-//                pool.availables.size mustEqual 0
-//            }
-//
-//            "take maxObjects" in {
-//                takeAndWait(maxObjects)
-//
-//                pool.inUse.size mustEqual maxObjects
-//                pool.queued.size mustEqual 0
-//                pool.availables.size mustEqual 0
-//            }
-//
-//            "take maxObjects - 1 and take one failed" in {
-//                takeAndWait(maxObjects - 1)
-//
-//                factory.failCreate = true
-//                takeAndWait(1) must throwA[IllegalStateException]
-//
-//                pool.inUse.size mustEqual maxObjects - 1
-//                pool.queued.size mustEqual 0
-//                pool.availables.size mustEqual 0
-//            }
-//
-//            "take maxObjects and receive one back" in {
-//                takeAndWait(maxObjects)
-//                await(pool.giveBack(1))
-//
-//                pool.inUse.size mustEqual maxObjects - 1
-//                pool.queued.size mustEqual 0
-//                pool.availables.size mustEqual 1
-//            }
-//
-//            "take maxObjects and receive one invalid back" in {
-//                takeAndWait(maxObjects)
-//                factory.reject += 1
-//                await(pool.giveBack(1)) must throwA[IllegalStateException]
-//
-//                pool.inUse.size mustEqual maxObjects - 1
-//                pool.queued.size mustEqual 0
-//                pool.availables.size mustEqual 0
-//            }
-//        }
+        "before exceed maxObjects" >> {
+
+            "take one element" in {
+                takeAndWait(1)
+
+                pool.inUse.size mustEqual 1
+                pool.queued.size mustEqual 0
+                pool.availables.size mustEqual 0
+            }
+
+            "take one element and return it invalid" in {
+                takeAndWait(1)
+                factory.reject += 1
+
+                await(pool.giveBack(1)) must throwA[IllegalStateException]
+
+                pool.inUse.size mustEqual 0
+                pool.queued.size mustEqual 0
+                pool.availables.size mustEqual 0
+            }
+
+            "take one failed element" in {
+                factory.failCreate = true
+                takeAndWait(1) must throwA[IllegalStateException]
+
+                pool.inUse.size mustEqual 0
+                pool.queued.size mustEqual 0
+                pool.availables.size mustEqual 0
+            }
+
+            "take maxObjects" in {
+                takeAndWait(maxObjects)
+
+                pool.inUse.size mustEqual maxObjects
+                pool.queued.size mustEqual 0
+                pool.availables.size mustEqual 0
+            }
+
+            "take maxObjects - 1 and take one failed" in {
+                takeAndWait(maxObjects - 1)
+
+                factory.failCreate = true
+                takeAndWait(1) must throwA[IllegalStateException]
+
+                pool.inUse.size mustEqual maxObjects - 1
+                pool.queued.size mustEqual 0
+                pool.availables.size mustEqual 0
+            }
+
+            "take maxObjects and receive one back" in {
+                takeAndWait(maxObjects)
+                await(pool.giveBack(1))
+
+                pool.inUse.size mustEqual maxObjects - 1
+                pool.queued.size mustEqual 0
+                pool.availables.size mustEqual 1
+            }
+
+            "take maxObjects and receive one invalid back" in {
+                takeAndWait(maxObjects)
+                factory.reject += 1
+                await(pool.giveBack(1)) must throwA[IllegalStateException]
+
+                pool.inUse.size mustEqual maxObjects - 1
+                pool.queued.size mustEqual 0
+                pool.availables.size mustEqual 0
+            }
+        }
 
         "after exceed maxObjects" >> {
 
