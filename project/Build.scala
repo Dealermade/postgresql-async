@@ -51,7 +51,7 @@ object Configuration {
 
   val commonVersion = "0.2.22-IQ.5"
   val projectScalaVersion = "2.12.7"
-  val specs2Version = "3.8.9"
+  val specs2Version = "3.8.6"
 
   val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
   val specs2JunitDependency = "org.specs2" %% "specs2-junit" % specs2Version % "test"
