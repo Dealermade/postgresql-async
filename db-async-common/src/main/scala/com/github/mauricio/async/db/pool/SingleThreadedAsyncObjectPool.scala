@@ -43,9 +43,7 @@ object SingleThreadedAsyncObjectPool {
   * @param configuration
   * @tparam T type of the object this pool holds
   */
-class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
-                                       configuration: PoolConfiguration,
-                                       mainPool: Worker = Worker())
+class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T], configuration: PoolConfiguration, mainPool: Worker = Worker())
     extends AsyncObjectPool[T] {
 
   import SingleThreadedAsyncObjectPool.{Counter, log}
