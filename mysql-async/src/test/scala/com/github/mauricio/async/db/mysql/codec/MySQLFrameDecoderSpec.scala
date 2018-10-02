@@ -175,7 +175,7 @@ class MySQLFrameDecoderSpec extends Specification {
     channel
   }
 
-  def createOkPacket() : ByteBuf = {
+  def createOkPacket(): ByteBuf = {
     val buffer = ByteBufferUtils.packetBuffer()
     buffer.writeByte(0)
     buffer.writeLength(10)
@@ -187,7 +187,7 @@ class MySQLFrameDecoderSpec extends Specification {
     buffer
   }
 
-  def createErrorPacket(content : String) : ByteBuf = {
+  def createErrorPacket(content: String): ByteBuf = {
     val buffer = ByteBufferUtils.packetBuffer()
     buffer.writeByte(0xff)
     buffer.writeShort(27)
@@ -198,7 +198,7 @@ class MySQLFrameDecoderSpec extends Specification {
     buffer
   }
 
-  def createColumnPacket( name : String, columnType : Int ) : ByteBuf = {
+  def createColumnPacket(name: String, columnType: Int): ByteBuf = {
     val buffer = ByteBufferUtils.packetBuffer()
     buffer.writeLenghtEncodedString("def", charset)
     buffer.writeLenghtEncodedString("some_schema", charset)
@@ -217,7 +217,7 @@ class MySQLFrameDecoderSpec extends Specification {
     buffer
   }
 
-  def createEOFPacket() : ByteBuf = {
+  def createEOFPacket(): ByteBuf = {
     val buffer = ByteBufferUtils.packetBuffer()
     buffer.writeByte(0xfe)
     buffer.writeShort(879)
@@ -227,7 +227,5 @@ class MySQLFrameDecoderSpec extends Specification {
 
     buffer
   }
-
-
 
 }

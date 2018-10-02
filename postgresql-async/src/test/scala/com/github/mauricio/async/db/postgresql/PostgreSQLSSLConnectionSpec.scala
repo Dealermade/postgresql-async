@@ -35,14 +35,14 @@ class PostgreSQLSSLConnectionSpec extends Specification with DatabaseTestHelper 
     "throws exception when CA verification fails" in {
 
       withSSLHandler(Mode.VerifyCA, rootCert = None) { handler =>
-      } must throwA[SSLHandshakeException]
+        } must throwA[SSLHandshakeException]
 
     }
 
     "throws exception when hostname verification fails" in {
 
       withSSLHandler(Mode.VerifyFull, "127.0.0.1") { handler =>
-      } must throwA[SSLHandshakeException]
+        } must throwA[SSLHandshakeException]
 
     }
 

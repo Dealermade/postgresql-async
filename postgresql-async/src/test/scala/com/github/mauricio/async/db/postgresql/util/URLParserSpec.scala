@@ -59,7 +59,6 @@ class URLParserSpec extends Specification {
       configuration.port === 5432
     }
 
-
     "create a connection without username and password" in {
       val connectionUri = "jdbc:postgresql://128.167.54.90:9987/my_database"
 
@@ -214,7 +213,6 @@ class URLParserSpec extends Specification {
       configuration.host === "localhost"
       configuration.port === 5432
     }
-
 
     "recognise a postgresql:// uri" in {
       parse("postgresql://localhost:425/dbname") mustEqual DEFAULT.copy(

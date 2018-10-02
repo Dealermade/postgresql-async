@@ -35,22 +35,21 @@ object BasicExample {
 
     val future: Future[QueryResult] = connection.sendQuery("SELECT 0")
 
-    val mapResult: Future[Any] = future.map(queryResult => queryResult.rows match {
-      case Some(resultSet) => {
-        val row : RowData = resultSet.head
-        row(0)
-      }
-      case None => -1
-    }
-    )
+    val mapResult: Future[Any] = future.map(queryResult =>
+      queryResult.rows match {
+        case Some(resultSet) => {
+          val row: RowData = resultSet.head
+          row(0)
+        }
+        case None => -1
+    })
 
-    val result = Await.result( mapResult, 5 seconds )
+    val result = Await.result(mapResult, 5 seconds)
 
     println(result)
 
     connection.disconnect
 
   }
-
 
 }

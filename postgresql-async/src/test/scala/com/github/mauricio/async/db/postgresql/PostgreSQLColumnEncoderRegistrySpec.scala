@@ -10,7 +10,7 @@ class PostgreSQLColumnEncoderRegistrySpec extends Specification {
   "column encoder registry" should {
 
     "encode Some(value) like value" in {
-      
+
       val actual = encoder.encode(Some(1l))
       val expected = encoder.encode(1l)
 
@@ -18,7 +18,7 @@ class PostgreSQLColumnEncoderRegistrySpec extends Specification {
     }
 
     "encode Some(value) in list like value in list" in {
-      
+
       val actual = encoder.encode(List(Some(1l), Some("foo")))
       val expected = encoder.encode(List(1l, "foo"))
 

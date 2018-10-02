@@ -20,12 +20,13 @@ import scala.concurrent.duration._
   * @tparam T the AsyncObjectPool being tested.
   */
 abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implicit tag: TypeTag[T])
-  extends Specification
+    extends Specification
     with Mockito {
 
   import AbstractAsyncObjectPoolSpec._
 
-  protected def pool(factory: ObjectFactory[Widget] = new TestWidgetFactory, conf: PoolConfiguration = PoolConfiguration.Default): T
+  protected def pool(factory: ObjectFactory[Widget] = new TestWidgetFactory,
+                     conf: PoolConfiguration = PoolConfiguration.Default): T
 
   // Evaluates to the type of AsyncObjectPool
   s"the ${tag.tpe.erasure} variant of AsyncObjectPool" should {
@@ -51,16 +52,13 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
 
       val factory = spy(new TestWidgetFactory)
 
-      val p = pool(
-        factory = factory,
-        conf = PoolConfiguration(
-          maxObjects = 5,
-          maxIdle = 2,
-          maxQueueSize = 5,
-          validationInterval = 2000
-        ))
-
-
+      val p = pool(factory = factory,
+                   conf = PoolConfiguration(
+                     maxObjects = 5,
+                     maxIdle = 2,
+                     maxQueueSize = 5,
+                     validationInterval = 2000
+                   ))
 
       var taken = Seq.empty[Widget]
       "can take up to maxObjects" in {
@@ -142,7 +140,6 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
       Await.result(p.close, Duration.Inf) must be(p)
     }
 
-
     "destroy a failed widget" in {
       val factory = spy(new TestWidgetFactory)
       val p = pool(factory = factory)
@@ -206,7 +203,6 @@ object AbstractAsyncObjectPoolSpec {
   }
 
 }
-
 
 class SingleThreadedAsyncObjectPoolSpec extends AbstractAsyncObjectPoolSpec[SingleThreadedAsyncObjectPool[Widget]] {
 

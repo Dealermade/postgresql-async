@@ -78,8 +78,8 @@ class MessageDecoderSpec extends Specification {
 
     "should raise an exception if the length is negative" in {
       val buffer = Unpooled.buffer()
-      buffer.writeByte( ServerMessage.Close )
-      buffer.writeInt( 2 )
+      buffer.writeByte(ServerMessage.Close)
+      buffer.writeInt(2)
       val out = new util.ArrayList[Object]()
 
       this.decoder.decode(null, buffer, out) must throwA[NegativeMessageSizeException]
@@ -88,14 +88,13 @@ class MessageDecoderSpec extends Specification {
     "should raise an exception if the length is too big" in {
 
       val buffer = Unpooled.buffer()
-      buffer.writeByte( ServerMessage.Close )
-      buffer.writeInt( MessageDecoder.DefaultMaximumSize + 10 )
+      buffer.writeByte(ServerMessage.Close)
+      buffer.writeInt(MessageDecoder.DefaultMaximumSize + 10)
       val out = new util.ArrayList[Object]()
 
       this.decoder.decode(null, buffer, out) must throwA[MessageTooLongException]
     }
 
   }
-
 
 }

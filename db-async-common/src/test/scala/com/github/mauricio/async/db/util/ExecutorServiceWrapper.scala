@@ -15,7 +15,8 @@ class ExecutorServiceWrapper(implicit ec: ExecutionContext) extends ExecutorServ
   def execute(command: Runnable) {
     ec.execute(new Runnable {
       def run() {
-        try command.run() catch {
+        try command.run()
+        catch {
           case NonFatal(ex) => ec.reportFailure(ex)
         }
       }
@@ -79,8 +80,7 @@ class ExecutorServiceWrapper(implicit ec: ExecutionContext) extends ExecutorServ
           try {
             val result = callback
             promise.tryComplete(Success(Finished(result)))
-          }
-          catch {
+          } catch {
             case NonFatal(ex) =>
               promise.tryComplete(Failure(ex))
               ec.reportFailure(ex)
@@ -126,8 +126,9 @@ class ExecutorServiceWrapper(implicit ec: ExecutionContext) extends ExecutorServ
     if (tasks.size() == 0)
       throw new IllegalArgumentException("tasks is empty")
 
-    val promises = tasks.asScala.map(task => executeWithPromise {
-      task.call()
+    val promises = tasks.asScala.map(task =>
+      executeWithPromise {
+        task.call()
     })
 
     val firstCompleted = Future.firstCompletedOf(promises.map(_.future))
@@ -143,8 +144,9 @@ class ExecutorServiceWrapper(implicit ec: ExecutionContext) extends ExecutorServ
     if (tasks.size() == 0)
       throw new IllegalArgumentException("tasks is empty")
 
-    val promises = tasks.asScala.map(task => executeWithPromise {
-      task.call()
+    val promises = tasks.asScala.map(task =>
+      executeWithPromise {
+        task.call()
     })
     val futures = promises.map(_.future)
     val sequence = Future.sequence(futures)
@@ -154,8 +156,8 @@ class ExecutorServiceWrapper(implicit ec: ExecutionContext) extends ExecutorServ
   }
 
   private[this] def durationFor(timeout: Long, unit: TimeUnit) = unit match {
-    case TimeUnit.NANOSECONDS => timeout.nanos
+    case TimeUnit.NANOSECONDS  => timeout.nanos
     case TimeUnit.MICROSECONDS => timeout.micros
-    case _ => unit.toMillis(timeout).millis
+    case _                     => unit.toMillis(timeout).millis
   }
 }

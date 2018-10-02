@@ -29,13 +29,12 @@ class BinaryRowDecoderSpec extends Specification {
   val registry = new DecoderRegistry(CharsetUtil.UTF_8)
   val decoder = new BinaryRowDecoder()
 
-  val idAndName = Array[Byte]( 0, 1, 0, 0, 0, 0, 0, 0, 0, 3, 106, 111, 101)
-  val idAndNameColumns = Array(
-    createColumn("id", ColumnTypes.FIELD_TYPE_LONGLONG),
-    createColumn("name", ColumnTypes.FIELD_TYPE_VAR_STRING) )
+  val idAndName = Array[Byte](0, 1, 0, 0, 0, 0, 0, 0, 0, 3, 106, 111, 101)
+  val idAndNameColumns =
+    Array(createColumn("id", ColumnTypes.FIELD_TYPE_LONGLONG), createColumn("name", ColumnTypes.FIELD_TYPE_VAR_STRING))
 
-  val idNameAndNull = Array[Byte]( 16, 1, 0, 0, 0, 0, 0, 0, 0, 3, 106, 111, 101)
-  val idNameAndNullColumns = idAndNameColumns ++ List( createColumn("null_value", ColumnTypes.FIELD_TYPE_NULL) )
+  val idNameAndNull = Array[Byte](16, 1, 0, 0, 0, 0, 0, 0, 0, 3, 106, 111, 101)
+  val idNameAndNullColumns = idAndNameColumns ++ List(createColumn("null_value", ColumnTypes.FIELD_TYPE_NULL))
 
   "binary row decoder" should {
 
@@ -60,7 +59,7 @@ class BinaryRowDecoderSpec extends Specification {
 
   }
 
-  def createColumn( name : String, columnType : Int ) : ColumnDefinitionMessage = {
+  def createColumn(name: String, columnType: Int): ColumnDefinitionMessage = {
 
     new ColumnDefinitionMessage(
       "root",

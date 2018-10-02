@@ -23,9 +23,9 @@ class IntervalSpec extends Specification {
 
   "interval encoder/decoder" should {
 
-    def decode(s : String) : Any = PostgreSQLIntervalEncoderDecoder.decode(s)
-    def encode(i : Any) : String = PostgreSQLIntervalEncoderDecoder.encode(i)
-    def both(s : String) : String = encode(decode(s))
+    def decode(s: String): Any = PostgreSQLIntervalEncoderDecoder.decode(s)
+    def encode(i: Any): String = PostgreSQLIntervalEncoderDecoder.encode(i)
+    def both(s: String): String = encode(decode(s))
 
     "parse and encode example intervals" in {
       Seq("1-2", "1 year 2 mons", "@ 1 year 2 mons", "@ 1 year 2 mons", "P1Y2M") forall {

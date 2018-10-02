@@ -43,7 +43,20 @@ class ArrayStreamingParserSpec extends Specification {
       val delegate = new LoggingDelegate()
       parser.parse(content, delegate)
 
-      delegate.items === ArrayBuffer("{", "{", "item", "is here", "but\"not there", "}", "{", "so", "this is your last step", "}", "{", "", "}", "}")
+      delegate.items === ArrayBuffer("{",
+                                     "{",
+                                     "item",
+                                     "is here",
+                                     "but\"not there",
+                                     "}",
+                                     "{",
+                                     "so",
+                                     "this is your last step",
+                                     "}",
+                                     "{",
+                                     "",
+                                     "}",
+                                     "}")
       delegate.starts === 4
       delegate.ends === 4
     }

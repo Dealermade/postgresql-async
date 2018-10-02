@@ -30,7 +30,6 @@ class URLParserSpec extends Specification {
   "mysql URLParser" should {
     import URLParser.{DEFAULT, parse, parseOrDie}
 
-
     "have a reasonable default" in {
       // This is a deliberate extra step, protecting the DEFAULT from frivilous changes.
       // Any change to DEFAULT should require a change to this test.
@@ -43,7 +42,6 @@ class URLParserSpec extends Specification {
         database = None
       )
     }
-
 
     // Divided into sections
     // =========== jdbc:mysql ===========
@@ -70,7 +68,6 @@ class URLParserSpec extends Specification {
         host = "128.167.54.90"
       )
     }
-
 
     "create a connection without username and password" in {
       val connectionUri = "jdbc:mysql://128.167.54.90:9987/my_database"
@@ -185,7 +182,6 @@ class URLParserSpec extends Specification {
       configuration.host === "127.0.0.1"
       configuration.port === 3306
     }
-
 
     "recognise a mysql:// uri" in {
       parse("mysql://localhost:425/dbname") mustEqual DEFAULT.copy(
