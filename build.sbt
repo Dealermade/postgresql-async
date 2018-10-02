@@ -37,7 +37,6 @@ lazy val mysql = (project in file(mysqlName))
 
 
 val commonVersion = "0.2.22-IQ.5"
-val projectScalaVersion = "2.12.7"
 val specs2Version = "4.3.4"
 
 val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
@@ -63,7 +62,7 @@ val implementationDependencies = Seq(
 )
 
 val baseSettings = Seq(
-  scalaVersion := projectScalaVersion,
+  scalaVersion := "2.12.7",
   scalacOptions :=
     Opts.compile.encoding("UTF8")
       :+ Opts.compile.deprecation
@@ -72,7 +71,6 @@ val baseSettings = Seq(
   ,
   Test / testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential"),
   doc / scalacOptions := Seq("-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
-  crossScalaVersions := Seq(projectScalaVersion, "2.10.6", "2.11.8", "2.12.7"),
   javacOptions := Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF8"),
   organization := "com.github.mauricio",
   version := commonVersion,
