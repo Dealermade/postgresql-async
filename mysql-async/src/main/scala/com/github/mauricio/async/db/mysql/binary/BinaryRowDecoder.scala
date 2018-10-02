@@ -65,7 +65,7 @@ class BinaryRowDecoder {
 
       bit <<= 1
 
-      if (( bit & 255) == 0) {
+      if ((bit & 255) == 0) {
         bit = 1
         nullMaskPos += 1
       }

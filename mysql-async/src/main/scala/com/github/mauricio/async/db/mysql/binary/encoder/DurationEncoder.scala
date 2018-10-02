@@ -37,9 +37,9 @@ object DurationEncoder extends BinaryEncoder {
     val microsDuration = secondsDuration - seconds.seconds
     val micros = microsDuration.toMicros
 
-    val hasMicros  = micros != 0
+    val hasMicros = micros != 0
 
-    if ( hasMicros ) {
+    if (hasMicros) {
       buffer.writeByte(12)
     } else {
       buffer.writeByte(8)
@@ -56,7 +56,7 @@ object DurationEncoder extends BinaryEncoder {
     buffer.writeByte(minutes.asInstanceOf[Int])
     buffer.writeByte(seconds.asInstanceOf[Int])
 
-    if ( hasMicros ) {
+    if (hasMicros) {
       buffer.writeInt(micros.asInstanceOf[Int])
     }
 

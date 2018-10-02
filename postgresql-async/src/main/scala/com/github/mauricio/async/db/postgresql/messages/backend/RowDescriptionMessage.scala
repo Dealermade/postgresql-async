@@ -16,5 +16,4 @@
 
 package com.github.mauricio.async.db.postgresql.messages.backend
 
-case class RowDescriptionMessage(val columnDatas: Array[PostgreSQLColumnData])
-  extends ServerMessage(ServerMessage.RowDescription)
+case class RowDescriptionMessage(val columnDatas: Array[PostgreSQLColumnData]) extends ServerMessage(ServerMessage.RowDescription)

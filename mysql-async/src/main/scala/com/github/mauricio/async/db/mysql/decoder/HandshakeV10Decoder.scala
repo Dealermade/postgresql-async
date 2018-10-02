@@ -77,7 +77,7 @@ class HandshakeV10Decoder(charset: Charset) extends MessageDecoder {
     log.debug(s"Auth plugin data length was ${authPluginDataLength}")
 
     if ((serverCapabilityFlags & CLIENT_SECURE_CONNECTION) != 0) {
-      val complement = if ( authPluginDataLength > 0 ) {
+      val complement = if (authPluginDataLength > 0) {
         authPluginDataLength - 1 - SeedSize
       } else {
         SeedComplementSize

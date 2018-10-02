@@ -34,7 +34,7 @@ class QueryMessageEncoder(charset: Charset) extends Encoder {
 
     val m = message.asInstanceOf[QueryMessage]
 
-    if ( log.isDebugEnabled ) {
+    if (log.isDebugEnabled) {
       log.debug("Executing direct query ({})", m.query)
     }
 

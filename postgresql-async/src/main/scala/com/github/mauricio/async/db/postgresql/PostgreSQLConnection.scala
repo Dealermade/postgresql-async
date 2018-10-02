@@ -43,17 +43,15 @@ object PostgreSQLConnection {
   final val log = Log.get[PostgreSQLConnection]
 }
 
-class PostgreSQLConnection
-(
-  configuration: Configuration = URLParser.DEFAULT,
-  encoderRegistry: ColumnEncoderRegistry = PostgreSQLColumnEncoderRegistry.Instance,
-  decoderRegistry: ColumnDecoderRegistry = PostgreSQLColumnDecoderRegistry.Instance,
-  group : EventLoopGroup = NettyUtils.DefaultEventLoopGroup,
-  implicit val executionContext : ExecutionContext = ExecutorServiceUtils.CachedExecutionContext
-  )
-  extends PostgreSQLConnectionDelegate
-  with Connection
-  with  TimeoutScheduler {
+class PostgreSQLConnection(
+    configuration: Configuration = URLParser.DEFAULT,
+    encoderRegistry: ColumnEncoderRegistry = PostgreSQLColumnEncoderRegistry.Instance,
+    decoderRegistry: ColumnDecoderRegistry = PostgreSQLColumnDecoderRegistry.Instance,
+    group: EventLoopGroup = NettyUtils.DefaultEventLoopGroup,
+    implicit val executionContext: ExecutionContext = ExecutorServiceUtils.CachedExecutionContext
+) extends PostgreSQLConnectionDelegate
+    with Connection
+    with TimeoutScheduler {
 
   import PostgreSQLConnection._
 
@@ -79,12 +77,12 @@ class PostgreSQLConnection
   private val queryPromiseReference = new AtomicReference[Option[Promise[QueryResult]]](None)
   private var currentQuery: Option[MutableResultSet[PostgreSQLColumnData]] = None
   private var currentPreparedStatement: Option[PreparedStatementHolder] = None
-  private var version = Version(0,0,0)
+  private var version = Version(0, 0, 0)
   private var notifyListeners = new CopyOnWriteArrayList[NotificationResponse => Unit]()
-  
+
   private var queryResult: Option[QueryResult] = None
 
-  override def eventLoopGroup : EventLoopGroup = group
+  override def eventLoopGroup: EventLoopGroup = group
   def isReadyForQuery: Boolean = this.queryPromise.isEmpty
 
   def connect: Future[Connection] = {
@@ -100,7 +98,7 @@ class PostgreSQLConnection
     }
   }
 
-  override def disconnect: Future[Connection] = this.connectionHandler.disconnect.map( c => this )
+  override def disconnect: Future[Connection] = this.connectionHandler.disconnect.map(c => this)
   override def onTimeout = disconnect
 
   override def isConnected: Boolean = this.connectionHandler.isConnected
@@ -114,7 +112,7 @@ class PostgreSQLConnection
     this.setQueryPromise(promise)
 
     write(new QueryMessage(query))
-    addTimeout(promise,configuration.queryTimeout)
+    addTimeout(promise, configuration.queryTimeout)
     promise.future
   }
 
@@ -124,10 +122,11 @@ class PostgreSQLConnection
     val promise = Promise[QueryResult]()
     this.setQueryPromise(promise)
 
-    val holder = if (configuration.isPrepareStatements)
-      buildNamedPreparedStatementHolder(query, values)
-    else
-      buildUnnamedPreparedStatementHolder(query)
+    val holder =
+      if (configuration.isPrepareStatements)
+        buildNamedPreparedStatementHolder(query, values)
+      else
+        buildUnnamedPreparedStatementHolder(query)
 
     if (holder.paramsCount != values.length) {
       this.clearQueryPromise
@@ -153,13 +152,12 @@ class PostgreSQLConnection
     this.parsedStatements.getOrElseUpdate(stKey, new PreparedStatementHolder(query, statementId))
   }
 
-
   private def buildUnnamedPreparedStatementHolder(query: String): PreparedStatementHolder = {
     val statementId = -1
     new PreparedStatementHolder(query, statementId)
   }
 
-  override def onError( exception : Throwable ) {
+  override def onError(exception: Throwable) {
     this.setErrorOnFutures(exception)
   }
 
@@ -182,7 +180,7 @@ class PostgreSQLConnection
 
   override def onReadyForQuery() {
     this.connectionFuture.trySuccess(this)
-    
+
     this.recentError = false
     queryResult.foreach(this.succeedQueryPromise)
   }
@@ -203,7 +201,7 @@ class PostgreSQLConnection
 
   override def onParameterStatus(m: ParameterStatusMessage) {
     this.parameterStatus.put(m.key, m.value)
-    if ( ServerVersionKey == m.key ) {
+    if (ServerVersionKey == m.key) {
       this.version = Version(m.value)
     }
   }
@@ -212,9 +210,9 @@ class PostgreSQLConnection
     val items = new Array[Any](m.values.size)
     var x = 0
 
-    while ( x < m.values.size ) {
+    while (x < m.values.size) {
       val buf = m.values(x)
-      items(x) = if ( buf == null ) {
+      items(x) = if (buf == null) {
         null
       } else {
         try {
@@ -235,7 +233,7 @@ class PostgreSQLConnection
     this.setColumnDatas(m.columnDatas)
   }
 
-  private def setColumnDatas( columnDatas : Array[PostgreSQLColumnData] ) {
+  private def setColumnDatas(columnDatas: Array[PostgreSQLColumnData]) {
     this.currentPreparedStatement.foreach { holder =>
       holder.columnDatas = columnDatas
     }
@@ -258,18 +256,18 @@ class PostgreSQLConnection
 
   }
 
-  override def onNotificationResponse( message : NotificationResponse ) {
+  override def onNotificationResponse(message: NotificationResponse) {
     val iterator = this.notifyListeners.iterator()
-    while ( iterator.hasNext ) {
+    while (iterator.hasNext) {
       iterator.next().apply(message)
     }
   }
 
-  def registerNotifyListener( listener : NotificationResponse => Unit ) {
+  def registerNotifyListener(listener: NotificationResponse => Unit) {
     this.notifyListeners.add(listener)
   }
 
-  def unregisterNotifyListener( listener : NotificationResponse => Unit ) {
+  def unregisterNotifyListener(listener: NotificationResponse => Unit) {
     this.notifyListeners.remove(listener)
   }
 
@@ -286,25 +284,24 @@ class PostgreSQLConnection
         authenticationMessage.salt
       )
     } else {
-      throw new MissingCredentialInformationException(
-        this.configuration.username,
-        this.configuration.password,
-        authenticationMessage.challengeType)
+      throw new MissingCredentialInformationException(this.configuration.username,
+                                                      this.configuration.password,
+                                                      authenticationMessage.challengeType)
     }
   }
 
-  private[this] def notReadyForQueryError(errorMessage : String, race : Boolean) = {
+  private[this] def notReadyForQueryError(errorMessage: String, race: Boolean) = {
     log.error(errorMessage)
     throw new ConnectionStillRunningQueryException(
       this.currentCount,
       race
     )
   }
-  
+
   def validateIfItIsReadyForQuery(errorMessage: String) =
     if (this.queryPromise.isDefined)
       notReadyForQueryError(errorMessage, false)
-  
+
   private def validateQuery(query: String) {
     this.validateIfItIsReadyForQuery("Can't run query because there is one query pending already")
 
@@ -320,7 +317,7 @@ class PostgreSQLConnection
       notReadyForQueryError("Can't run query due to a race with another started query", true)
   }
 
-  private def clearQueryPromise : Option[Promise[QueryResult]] = {
+  private def clearQueryPromise: Option[Promise[QueryResult]] = {
     this.queryPromiseReference.getAndSet(None)
   }
 
@@ -339,7 +336,7 @@ class PostgreSQLConnection
     }
   }
 
-  private def write( message : ClientMessage ) {
+  private def write(message: ClientMessage) {
     this.connectionHandler.write(message)
   }
 

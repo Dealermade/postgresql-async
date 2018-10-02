@@ -16,5 +16,4 @@
 
 package com.github.mauricio.async.db.postgresql.messages.backend
 
-case class ParameterStatusMessage(val key: String, val value: String)
-  extends ServerMessage(ServerMessage.ParameterStatus)
+case class ParameterStatusMessage(val key: String, val value: String) extends ServerMessage(ServerMessage.ParameterStatus)

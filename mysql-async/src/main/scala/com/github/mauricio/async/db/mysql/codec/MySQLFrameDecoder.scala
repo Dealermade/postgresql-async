@@ -29,7 +29,6 @@ import java.nio.ByteOrder
 import java.nio.charset.Charset
 import java.util.concurrent.atomic.AtomicInteger
 
-
 class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMessageDecoder {
 
   private final val log = Log.getByName(s"[frame-decoder]${connectionId}")
@@ -219,7 +218,6 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
       this.processedParams += 1
       return this.columnDecoder.decode(slice)
     }
-
 
     if (this.totalColumns == this.processedColumns) {
       if (this.isPreparedStatementExecute) {

@@ -25,46 +25,45 @@ import org.slf4j.LoggerFactory
 import scala.util.matching.Regex
 
 /**
- * Common parser assisting methods for PG and MySQL URI parsers.
- */
+  * Common parser assisting methods for PG and MySQL URI parsers.
+  */
 abstract class AbstractURIParser {
   import AbstractURIParser._
 
   protected val logger = LoggerFactory.getLogger(getClass)
 
   /**
-   * Parses out userInfo into a tuple of optional username and password
-   *
-   * @param userInfo the optional user info string
-   * @return a tuple of optional username and password
-   */
-  final protected def parseUserInfo(userInfo: Option[String]): (Option[String], Option[String]) = userInfo.map(_.split(":", 2).toList) match {
-    case Some(user :: pass :: Nil) ⇒ (Some(user), Some(pass))
-    case Some(user :: Nil) ⇒ (Some(user), None)
-    case _ ⇒ (None, None)
-  }
+    * Parses out userInfo into a tuple of optional username and password
+    *
+    * @param userInfo the optional user info string
+    * @return a tuple of optional username and password
+    */
+  final protected def parseUserInfo(userInfo: Option[String]): (Option[String], Option[String]) =
+    userInfo.map(_.split(":", 2).toList) match {
+      case Some(user :: pass :: Nil) ⇒ (Some(user), Some(pass))
+      case Some(user :: Nil) ⇒ (Some(user), None)
+      case _ ⇒ (None, None)
+    }
 
   /**
-   * A Regex that will match the base name of the driver scheme, minus jdbc:.
-   * Eg: postgres(?:ul)?
-   */
+    * A Regex that will match the base name of the driver scheme, minus jdbc:.
+    * Eg: postgres(?:ul)?
+    */
   protected val SCHEME: Regex
 
   /**
-   * The default for this particular URLParser, ie: appropriate and specific to PG or MySQL accordingly
-   */
+    * The default for this particular URLParser, ie: appropriate and specific to PG or MySQL accordingly
+    */
   val DEFAULT: Configuration
 
-
   /**
-   * Parses the provided url and returns a Configuration based upon it.  On an error,
-   * @param url the URL to parse.
-   * @param charset the charset to use.
-   * @return a Configuration.
-   */
+    * Parses the provided url and returns a Configuration based upon it.  On an error,
+    * @param url the URL to parse.
+    * @param charset the charset to use.
+    * @return a Configuration.
+    */
   @throws[UnableToParseURLException]("if the URL does not match the expected type, or cannot be parsed for any reason")
-  def parseOrDie(url: String,
-                 charset: Charset = DEFAULT.charset): Configuration = {
+  def parseOrDie(url: String, charset: Charset = DEFAULT.charset): Configuration = {
     try {
       val properties = parse(new URI(url).parseServerAuthority)
 
@@ -75,17 +74,14 @@ abstract class AbstractURIParser {
     }
   }
 
-
   /**
-   * Parses the provided url and returns a Configuration based upon it.  On an error,
-   * a default configuration is returned.
-   * @param url the URL to parse.
-   * @param charset the charset to use.
-   * @return a Configuration.
-   */
-  def parse(url: String,
-            charset: Charset = DEFAULT.charset
-           ): Configuration = {
+    * Parses the provided url and returns a Configuration based upon it.  On an error,
+    * a default configuration is returned.
+    * @param url the URL to parse.
+    * @param charset the charset to use.
+    * @return a Configuration.
+    */
+  def parse(url: String, charset: Charset = DEFAULT.charset): Configuration = {
     try {
       parseOrDie(url, charset)
     } catch {
@@ -97,12 +93,12 @@ abstract class AbstractURIParser {
   }
 
   /**
-   * Assembles a configuration out of the provided property map.  This is the generic form, subclasses may override to
-   * handle additional properties.
-   * @param properties the extracted properties from the URL.
-   * @param charset the charset passed in to parse or parseOrDie.
-   * @return
-   */
+    * Assembles a configuration out of the provided property map.  This is the generic form, subclasses may override to
+    * handle additional properties.
+    * @param properties the extracted properties from the URL.
+    * @param charset the charset passed in to parse or parseOrDie.
+    * @return
+    */
   protected def assembleConfiguration(properties: Map[String, String], charset: Charset): Configuration = {
     DEFAULT.copy(
       username = properties.getOrElse(USERNAME, DEFAULT.username),
@@ -116,7 +112,6 @@ abstract class AbstractURIParser {
       isPrepareStatements = properties.get(PREPARE_THRESHOLD).filter(_ == "0").forall(_ ⇒ false)
     )
   }
-
 
   protected def parse(uri: URI): Map[String, String] = {
     uri.getScheme match {
@@ -142,7 +137,6 @@ abstract class AbstractURIParser {
           if name.nonEmpty && value.nonEmpty
         } yield URLDecoder.decode(name, "UTF-8") -> URLDecoder.decode(value, "UTF-8"))
 
-
         builder.result
       case "jdbc" =>
         handleJDBC(uri)
@@ -152,11 +146,10 @@ abstract class AbstractURIParser {
   }
 
   /**
-   * This method breaks out handling of the jdbc: prefixed uri's, allowing them to be handled differently
-   * without reimplementing all of parse.
-   */
+    * This method breaks out handling of the jdbc: prefixed uri's, allowing them to be handled differently
+    * without reimplementing all of parse.
+    */
   protected def handleJDBC(uri: URI): Map[String, String] = parse(new URI(uri.getSchemeSpecificPart))
-
 
   final protected def unwrapIpv6address(server: String): String = {
     if (server.startsWith("[")) {
@@ -176,4 +169,3 @@ object AbstractURIParser {
   val CURRENT_SCHEMA = "currentSchema"
   val PREPARE_THRESHOLD = "prepareThreshold"
 }
-

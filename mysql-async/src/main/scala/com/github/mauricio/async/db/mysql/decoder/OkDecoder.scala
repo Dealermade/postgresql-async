@@ -21,7 +21,7 @@ import com.github.mauricio.async.db.mysql.message.server.{OkMessage, ServerMessa
 import com.github.mauricio.async.db.util.ChannelWrapper.bufferToWrapper
 import java.nio.charset.Charset
 
-class OkDecoder( charset : Charset ) extends MessageDecoder {
+class OkDecoder(charset: Charset) extends MessageDecoder {
 
   def decode(buffer: ByteBuf): ServerMessage = {
 

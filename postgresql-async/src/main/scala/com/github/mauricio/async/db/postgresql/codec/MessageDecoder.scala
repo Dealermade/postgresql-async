@@ -31,7 +31,8 @@ object MessageDecoder {
   val DefaultMaximumSize = 16777216
 }
 
-class MessageDecoder(sslEnabled: Boolean, charset: Charset, maximumMessageSize : Int = MessageDecoder.DefaultMaximumSize) extends ByteToMessageDecoder {
+class MessageDecoder(sslEnabled: Boolean, charset: Charset, maximumMessageSize: Int = MessageDecoder.DefaultMaximumSize)
+    extends ByteToMessageDecoder {
 
   import MessageDecoder.log
 
@@ -39,9 +40,9 @@ class MessageDecoder(sslEnabled: Boolean, charset: Charset, maximumMessageSize :
 
   private var sslChecked = false
 
-  override def decode(ctx: ChannelHandlerContext,  b: ByteBuf, out: java.util.List[Object]): Unit = {
+  override def decode(ctx: ChannelHandlerContext, b: ByteBuf, out: java.util.List[Object]): Unit = {
 
-    if (sslEnabled & !sslChecked)  {
+    if (sslEnabled & !sslChecked) {
       val code = b.readByte()
       sslChecked = true
       out.add(new SSLResponseMessage(code == 'S'))
@@ -53,17 +54,17 @@ class MessageDecoder(sslEnabled: Boolean, charset: Charset, maximumMessageSize :
       val lengthWithSelf = b.readInt()
       val length = lengthWithSelf - 4
 
-      if ( length < 0 ) {
+      if (length < 0) {
         throw new NegativeMessageSizeException(code, length)
       }
 
-      if ( length > maximumMessageSize ) {
+      if (length > maximumMessageSize) {
         throw new MessageTooLongException(code, length, maximumMessageSize)
       }
 
       if (b.readableBytes() >= length) {
 
-        if ( log.isTraceEnabled ) {
+        if (log.isTraceEnabled) {
           log.trace(s"Received buffer ${code}\n${BufferDumper.dumpAsHex(b)}")
         }
 

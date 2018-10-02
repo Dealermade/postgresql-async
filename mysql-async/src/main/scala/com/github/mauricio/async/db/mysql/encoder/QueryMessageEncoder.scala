@@ -21,15 +21,15 @@ import com.github.mauricio.async.db.mysql.message.client.{QueryMessage, ClientMe
 import com.github.mauricio.async.db.util.ByteBufferUtils
 import java.nio.charset.Charset
 
-class QueryMessageEncoder( charset : Charset ) extends MessageEncoder {
+class QueryMessageEncoder(charset: Charset) extends MessageEncoder {
 
   def encode(message: ClientMessage): ByteBuf = {
 
     val m = message.asInstanceOf[QueryMessage]
-    val encodedQuery = m.query.getBytes( charset )
-    val buffer = ByteBufferUtils.packetBuffer(4 + 1 + encodedQuery.length )
-    buffer.writeByte( ClientMessage.Query )
-    buffer.writeBytes( encodedQuery )
+    val encodedQuery = m.query.getBytes(charset)
+    val buffer = ByteBufferUtils.packetBuffer(4 + 1 + encodedQuery.length)
+    buffer.writeByte(ClientMessage.Query)
+    buffer.writeBytes(encodedQuery)
 
     buffer
   }

@@ -23,17 +23,17 @@ object MySQLNativePasswordAuthentication extends AuthenticationMethod {
 
   final val EmptyArray = Array.empty[Byte]
 
-  def generateAuthentication(charset : Charset, password: Option[String], seed : Array[Byte]): Array[Byte] = {
+  def generateAuthentication(charset: Charset, password: Option[String], seed: Array[Byte]): Array[Byte] = {
 
-    if ( password.isDefined ) {
-      scramble411(charset, password.get, seed )
+    if (password.isDefined) {
+      scramble411(charset, password.get, seed)
     } else {
       EmptyArray
     }
 
   }
 
-  private def scramble411(charset : Charset, password : String, seed : Array[Byte] ) : Array[Byte] = {
+  private def scramble411(charset: Charset, password: String, seed: Array[Byte]): Array[Byte] = {
 
     val messageDigest = MessageDigest.getInstance("SHA-1")
     val initialDigest = messageDigest.digest(password.getBytes(charset))
@@ -50,7 +50,7 @@ object MySQLNativePasswordAuthentication extends AuthenticationMethod {
     val result = messageDigest.digest()
     var counter = 0
 
-    while ( counter < result.length ) {
+    while (counter < result.length) {
       result(counter) = (result(counter) ^ initialDigest(counter)).asInstanceOf[Byte]
       counter += 1
     }

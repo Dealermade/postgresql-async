@@ -29,10 +29,10 @@ object TimeDecoder extends ColumnDecoder {
 
     val secondsAndMillis = pieces(2).split('.')
 
-    val parts = if ( secondsAndMillis.length == 2 ) {
-      (secondsAndMillis(0).toInt,secondsAndMillis(1).toInt)
+    val parts = if (secondsAndMillis.length == 2) {
+      (secondsAndMillis(0).toInt, secondsAndMillis(1).toInt)
     } else {
-      (secondsAndMillis(0).toInt,0)
+      (secondsAndMillis(0).toInt, 0)
     }
 
     val hours = pieces(0).toInt

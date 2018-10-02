@@ -18,7 +18,7 @@ package com.github.mauricio.async.db.postgresql.column
 
 import com.github.mauricio.async.db.column.ColumnEncoderDecoder
 import com.github.mauricio.async.db.postgresql.exceptions.ByteArrayFormatNotSupportedException
-import com.github.mauricio.async.db.util.{ Log, HexCodec }
+import com.github.mauricio.async.db.util.{Log, HexCodec}
 import java.nio.ByteBuffer
 
 import io.netty.buffer.ByteBuf
@@ -43,16 +43,15 @@ object ByteArrayEncoderDecoder extends ColumnEncoderDecoder {
 
       while (ci.hasNext) {
         ci.next match {
-          case '\\' ⇒ getCharOrDie(ci) match {
-            case '\\' ⇒ buffer.put('\\'.toByte)
-            case firstDigit ⇒
-              val secondDigit = getCharOrDie(ci)
-              val thirdDigit = getCharOrDie(ci)
-              // Must always be in triplets
-              buffer.put(
-                Integer.decode(
-                  new String(Array('0', firstDigit, secondDigit, thirdDigit))).toByte)
-          }
+          case '\\' ⇒
+            getCharOrDie(ci) match {
+              case '\\' ⇒ buffer.put('\\'.toByte)
+              case firstDigit ⇒
+                val secondDigit = getCharOrDie(ci)
+                val thirdDigit = getCharOrDie(ci)
+                // Must always be in triplets
+                buffer.put(Integer.decode(new String(Array('0', firstDigit, secondDigit, thirdDigit))).toByte)
+            }
           case c ⇒ buffer.put(c.toByte)
         }
       }
@@ -67,12 +66,12 @@ object ByteArrayEncoderDecoder extends ColumnEncoderDecoder {
   }
 
   /**
-   * This is required since {@link Iterator#next} when {@linke Iterator#hasNext} is false is undefined.
-   * @param ci the iterator source of the data
-   * @return the next character
-   * @throws IllegalArgumentException if there is no next character
-   */
-  private [this] def getCharOrDie(ci: Iterator[Char]): Char = {
+    * This is required since {@link Iterator#next} when {@linke Iterator#hasNext} is false is undefined.
+    * @param ci the iterator source of the data
+    * @return the next character
+    * @throws IllegalArgumentException if there is no next character
+    */
+  private[this] def getCharOrDie(ci: Iterator[Char]): Char = {
     if (ci.hasNext) {
       ci.next()
     } else {

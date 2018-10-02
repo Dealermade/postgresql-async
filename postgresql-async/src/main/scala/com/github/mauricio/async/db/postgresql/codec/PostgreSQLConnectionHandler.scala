@@ -50,17 +50,14 @@ object PostgreSQLConnectionHandler {
   final val log = Log.get[PostgreSQLConnectionHandler]
 }
 
-class PostgreSQLConnectionHandler
-(
-  configuration: Configuration,
-  encoderRegistry: ColumnEncoderRegistry,
-  decoderRegistry: ColumnDecoderRegistry,
-  connectionDelegate : PostgreSQLConnectionDelegate,
-  group : EventLoopGroup,
-  executionContext : ExecutionContext
-  )
-  extends SimpleChannelInboundHandler[Object]
-{
+class PostgreSQLConnectionHandler(
+    configuration: Configuration,
+    encoderRegistry: ColumnEncoderRegistry,
+    decoderRegistry: ColumnDecoderRegistry,
+    connectionDelegate: PostgreSQLConnectionDelegate,
+    group: EventLoopGroup,
+    executionContext: ExecutionContext
+) extends SimpleChannelInboundHandler[Object] {
 
   import PostgreSQLConnectionHandler.log
 
@@ -69,15 +66,16 @@ class PostgreSQLConnectionHandler
     "database" -> configuration.database,
     "client_encoding" -> configuration.charset.name(),
     "DateStyle" -> "ISO",
-    "extra_float_digits" -> "2")
+    "extra_float_digits" -> "2"
+  )
 
   private implicit final val _executionContext = executionContext
   private final val bootstrap = new Bootstrap()
   private final val connectionFuture = Promise[PostgreSQLConnectionHandler]()
   private final val disconnectionPromise = Promise[PostgreSQLConnectionHandler]()
-  private var processData : ProcessData = null
+  private var processData: ProcessData = null
 
-  private var currentContext : ChannelHandlerContext = null
+  private var currentContext: ChannelHandlerContext = null
 
   def connect: Future[PostgreSQLConnectionHandler] = {
     this.bootstrap.group(this.group)
@@ -88,7 +86,8 @@ class PostgreSQLConnectionHandler
         ch.pipeline.addLast(
           new MessageDecoder(configuration.ssl.mode != Mode.Disable, configuration.charset, configuration.maximumMessageSize),
           new MessageEncoder(configuration.charset, encoderRegistry),
-          PostgreSQLConnectionHandler.this)
+          PostgreSQLConnectionHandler.this
+        )
       }
 
     })
@@ -105,12 +104,13 @@ class PostgreSQLConnectionHandler
 
   def disconnect: Future[PostgreSQLConnectionHandler] = {
 
-    if ( this.isConnected ) {
+    if (this.isConnected) {
       this.currentContext.channel.writeAndFlush(CloseMessage).onComplete {
-        case Success(writeFuture) => writeFuture.channel.close().onComplete {
-          case Success(closeFuture) => this.disconnectionPromise.trySuccess(this)
-          case Failure(e) => this.disconnectionPromise.tryFailure(e)
-        }
+        case Success(writeFuture) =>
+          writeFuture.channel.close().onComplete {
+            case Success(closeFuture) => this.disconnectionPromise.trySuccess(this)
+            case Failure(e)           => this.disconnectionPromise.tryFailure(e)
+          }
         case Failure(e) => this.disconnectionPromise.tryFailure(e)
       }
     }
@@ -184,12 +184,11 @@ class PostgreSQLConnectionHandler
 
       case m: ServerMessage => {
 
-        (m.kind : @switch) match {
+        (m.kind: @switch) match {
           case ServerMessage.BackendKeyData => {
             this.processData = m.asInstanceOf[ProcessData]
           }
-          case ServerMessage.BindComplete => {
-          }
+          case ServerMessage.BindComplete => {}
           case ServerMessage.Authentication => {
             log.debug("Authentication response received {}", m)
             connectionDelegate.onAuthenticationResponse(m.asInstanceOf[AuthenticationMessage])
@@ -197,8 +196,7 @@ class PostgreSQLConnectionHandler
           case ServerMessage.CommandComplete => {
             connectionDelegate.onCommandComplete(m.asInstanceOf[CommandCompleteMessage])
           }
-          case ServerMessage.CloseComplete => {
-          }
+          case ServerMessage.CloseComplete => {}
           case ServerMessage.DataRow => {
             connectionDelegate.onDataRow(m.asInstanceOf[DataRowMessage])
           }
@@ -210,8 +208,7 @@ class PostgreSQLConnectionHandler
             exception.fillInStackTrace()
             connectionDelegate.onError(exception)
           }
-          case ServerMessage.NoData => {
-          }
+          case ServerMessage.NoData => {}
           case ServerMessage.Notice => {
             log.info("Received notice {}", m)
           }
@@ -221,8 +218,7 @@ class PostgreSQLConnectionHandler
           case ServerMessage.ParameterStatus => {
             connectionDelegate.onParameterStatus(m.asInstanceOf[ParameterStatusMessage])
           }
-          case ServerMessage.ParseComplete => {
-          }
+          case ServerMessage.ParseComplete => {}
           case ServerMessage.ReadyForQuery => {
             connectionDelegate.onReadyForQuery()
           }
@@ -252,7 +248,7 @@ class PostgreSQLConnectionHandler
     // unwrap CodecException if needed
     cause match {
       case t: CodecException => connectionDelegate.onError(t.getCause)
-      case _ =>  connectionDelegate.onError(cause)
+      case _                 => connectionDelegate.onError(cause)
     }
   }
 
@@ -264,9 +260,9 @@ class PostgreSQLConnectionHandler
     this.currentContext = ctx
   }
 
-  def write( message : ClientMessage ) {
+  def write(message: ClientMessage) {
     this.currentContext.writeAndFlush(message).onFailure {
-      case e : Throwable => connectionDelegate.onError(e)
+      case e: Throwable => connectionDelegate.onError(e)
     }
   }
 

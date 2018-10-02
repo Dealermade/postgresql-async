@@ -20,9 +20,9 @@ import com.github.mauricio.async.db.exceptions.DatabaseException
 
 object ByteArrayFormatNotSupportedException {
 
-  final val Message = """The bytea 'escape' format is not yet supported, you need to use a PG version that uses the 'hex' format (version 9 and onwards)"""
+  final val Message =
+    """The bytea 'escape' format is not yet supported, you need to use a PG version that uses the 'hex' format (version 9 and onwards)"""
 
 }
 
-class ByteArrayFormatNotSupportedException
-  extends DatabaseException( ByteArrayFormatNotSupportedException.Message )
+class ByteArrayFormatNotSupportedException extends DatabaseException(ByteArrayFormatNotSupportedException.Message)

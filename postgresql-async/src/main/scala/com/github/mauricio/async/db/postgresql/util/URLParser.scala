@@ -1,6 +1,6 @@
 /**
- *
- */
+  *
+  */
 package com.github.mauricio.async.db.postgresql.util
 
 import java.net.URI
@@ -10,8 +10,8 @@ import com.github.mauricio.async.db.{Configuration, SSLConfiguration}
 import com.github.mauricio.async.db.util.AbstractURIParser
 
 /**
- * The PostgreSQL URL parser.
- */
+  * The PostgreSQL URL parser.
+  */
 object URLParser extends AbstractURIParser {
   import AbstractURIParser._
 
@@ -35,8 +35,8 @@ object URLParser extends AbstractURIParser {
   val DEFAULT_PORT = "5432"
 
   /**
-   * The default configuration for PostgreSQL.
-   */
+    * The default configuration for PostgreSQL.
+    */
   override val DEFAULT = Configuration(
     username = "postgres",
     host = "localhost",
@@ -52,21 +52,23 @@ object URLParser extends AbstractURIParser {
 
   override protected def handleJDBC(uri: URI): Map[String, String] = uri.getSchemeSpecificPart match {
     case simplePGDB(db) => Map(DBNAME -> db)
-    case x => parse(new URI(x))
+    case x              => parse(new URI(x))
   }
 
   /**
-   * Assembles a configuration out of the provided property map.  This is the generic form, subclasses may override to
-   * handle additional properties.
-   *
-   * @param properties the extracted properties from the URL.
-   * @param charset    the charset passed in to parse or parseOrDie.
-   * @return
-   */
+    * Assembles a configuration out of the provided property map.  This is the generic form, subclasses may override to
+    * handle additional properties.
+    *
+    * @param properties the extracted properties from the URL.
+    * @param charset    the charset passed in to parse or parseOrDie.
+    * @return
+    */
   override protected def assembleConfiguration(properties: Map[String, String], charset: Charset): Configuration = {
     // Add SSL Configuration
-    super.assembleConfiguration(properties, charset).copy(
-      ssl = SSLConfiguration(properties)
-    )
+    super
+      .assembleConfiguration(properties, charset)
+      .copy(
+        ssl = SSLConfiguration(properties)
+      )
   }
 }

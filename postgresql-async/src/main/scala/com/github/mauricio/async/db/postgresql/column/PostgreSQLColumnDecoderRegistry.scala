@@ -28,7 +28,7 @@ object PostgreSQLColumnDecoderRegistry {
   val Instance = new PostgreSQLColumnDecoderRegistry()
 }
 
-class PostgreSQLColumnDecoderRegistry( charset : Charset = CharsetUtil.UTF_8 ) extends ColumnDecoderRegistry {
+class PostgreSQLColumnDecoderRegistry(charset: Charset = CharsetUtil.UTF_8) extends ColumnDecoderRegistry {
 
   private final val stringArrayDecoder = new ArrayDecoder(StringEncoderDecoder)
   private final val booleanArrayDecoder = new ArrayDecoder(BooleanEncoderDecoder)
@@ -41,7 +41,7 @@ class PostgreSQLColumnDecoderRegistry( charset : Charset = CharsetUtil.UTF_8 ) e
   private final val doubleArrayDecoder = new ArrayDecoder(DoubleEncoderDecoder)
   private final val timestampArrayDecoder = new ArrayDecoder(PostgreSQLTimestampEncoderDecoder)
   private final val timestampWithTimezoneArrayDecoder = new ArrayDecoder(PostgreSQLTimestampEncoderDecoder)
-  private final val dateArrayDecoder =  new ArrayDecoder(DateEncoderDecoder)
+  private final val dateArrayDecoder = new ArrayDecoder(DateEncoderDecoder)
   private final val timeArrayDecoder = new ArrayDecoder(TimeEncoderDecoder.Instance)
   private final val timeWithTimestampArrayDecoder = new ArrayDecoder(TimeWithTimezoneEncoderDecoder)
   private final val intervalArrayDecoder = new ArrayDecoder(PostgreSQLIntervalEncoderDecoder)
@@ -53,69 +53,69 @@ class PostgreSQLColumnDecoderRegistry( charset : Charset = CharsetUtil.UTF_8 ) e
   }
 
   def decoderFor(kind: Int): ColumnDecoder = {
-    (kind : @switch) match {
-      case Boolean => BooleanEncoderDecoder
+    (kind: @switch) match {
+      case Boolean      => BooleanEncoderDecoder
       case BooleanArray => this.booleanArrayDecoder
 
       case ColumnTypes.Char => CharEncoderDecoder
-      case CharArray => this.charArrayDecoder
+      case CharArray        => this.charArrayDecoder
 
-      case Bigserial => LongEncoderDecoder
+      case Bigserial      => LongEncoderDecoder
       case BigserialArray => this.longArrayDecoder
 
-      case Smallint => ShortEncoderDecoder
+      case Smallint      => ShortEncoderDecoder
       case SmallintArray => this.shortArrayDecoder
 
       case ColumnTypes.Integer => IntegerEncoderDecoder
-      case IntegerArray => this.integerArrayDecoder
+      case IntegerArray        => this.integerArrayDecoder
 
-      case OID => LongEncoderDecoder
+      case OID      => LongEncoderDecoder
       case OIDArray => this.longArrayDecoder
 
       case ColumnTypes.Numeric => BigDecimalEncoderDecoder
-      case NumericArray => this.bigDecimalArrayDecoder
+      case NumericArray        => this.bigDecimalArrayDecoder
 
-      case Real => FloatEncoderDecoder
+      case Real      => FloatEncoderDecoder
       case RealArray => this.floatArrayDecoder
 
       case ColumnTypes.Double => DoubleEncoderDecoder
-      case DoubleArray => this.doubleArrayDecoder
+      case DoubleArray        => this.doubleArrayDecoder
 
-      case Text => StringEncoderDecoder
+      case Text      => StringEncoderDecoder
       case TextArray => this.stringArrayDecoder
 
-      case Varchar => StringEncoderDecoder
+      case Varchar      => StringEncoderDecoder
       case VarcharArray => this.stringArrayDecoder
 
-      case Bpchar => StringEncoderDecoder
+      case Bpchar      => StringEncoderDecoder
       case BpcharArray => this.stringArrayDecoder
 
-      case Timestamp => PostgreSQLTimestampEncoderDecoder
+      case Timestamp      => PostgreSQLTimestampEncoderDecoder
       case TimestampArray => this.timestampArrayDecoder
 
-      case TimestampWithTimezone => PostgreSQLTimestampEncoderDecoder
+      case TimestampWithTimezone      => PostgreSQLTimestampEncoderDecoder
       case TimestampWithTimezoneArray => this.timestampWithTimezoneArrayDecoder
 
-      case Date => DateEncoderDecoder
+      case Date      => DateEncoderDecoder
       case DateArray => this.dateArrayDecoder
 
-      case Time => TimeEncoderDecoder.Instance
+      case Time      => TimeEncoderDecoder.Instance
       case TimeArray => this.timeArrayDecoder
 
-      case TimeWithTimezone => TimeWithTimezoneEncoderDecoder
+      case TimeWithTimezone      => TimeWithTimezoneEncoderDecoder
       case TimeWithTimezoneArray => this.timeWithTimestampArrayDecoder
 
-      case Interval => PostgreSQLIntervalEncoderDecoder
+      case Interval      => PostgreSQLIntervalEncoderDecoder
       case IntervalArray => this.intervalArrayDecoder
 
       case MoneyArray => this.stringArrayDecoder
-      case NameArray => this.stringArrayDecoder
-      case UUID => UUIDEncoderDecoder
-      case UUIDArray => this.uuidArrayDecoder
-      case XMLArray => this.stringArrayDecoder
-      case ByteA => ByteArrayEncoderDecoder
+      case NameArray  => this.stringArrayDecoder
+      case UUID       => UUIDEncoderDecoder
+      case UUIDArray  => this.uuidArrayDecoder
+      case XMLArray   => this.stringArrayDecoder
+      case ByteA      => ByteArrayEncoderDecoder
 
-      case Inet => InetAddressEncoderDecoder
+      case Inet      => InetAddressEncoderDecoder
       case InetArray => this.inetAddressArrayDecoder
 
       case _ => StringEncoderDecoder

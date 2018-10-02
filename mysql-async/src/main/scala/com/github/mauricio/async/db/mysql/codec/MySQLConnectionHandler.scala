@@ -41,14 +41,13 @@ import scala.concurrent._
 import scala.concurrent.duration.Duration
 
 class MySQLConnectionHandler(
-                              configuration: Configuration,
-                              charsetMapper: CharsetMapper,
-                              handlerDelegate: MySQLHandlerDelegate,
-                              group : EventLoopGroup,
-                              executionContext : ExecutionContext,
-                              connectionId : String
-                              )
-  extends SimpleChannelInboundHandler[Object] {
+    configuration: Configuration,
+    charsetMapper: CharsetMapper,
+    handlerDelegate: MySQLHandlerDelegate,
+    group: EventLoopGroup,
+    executionContext: ExecutionContext,
+    connectionId: String
+) extends SimpleChannelInboundHandler[Object] {
 
   private implicit val internalPool = executionContext
   private final val log = Log.getByName(s"[connection-handler]${connectionId}")
@@ -59,12 +58,12 @@ class MySQLConnectionHandler(
   private final val sendLongDataEncoder = new SendLongDataEncoder()
   private final val currentParameters = new ArrayBuffer[ColumnDefinitionMessage]()
   private final val currentColumns = new ArrayBuffer[ColumnDefinitionMessage]()
-  private final val parsedStatements = new HashMap[String,PreparedStatementHolder]()
+  private final val parsedStatements = new HashMap[String, PreparedStatementHolder]()
   private final val binaryRowDecoder = new BinaryRowDecoder()
 
-  private var currentPreparedStatementHolder : PreparedStatementHolder = null
-  private var currentPreparedStatement : PreparedStatement = null
-  private var currentQuery : MutableResultSet[ColumnDefinitionMessage] = null
+  private var currentPreparedStatementHolder: PreparedStatementHolder = null
+  private var currentPreparedStatement: PreparedStatement = null
+  private var currentQuery: MutableResultSet[ColumnDefinitionMessage] = null
   private var currentContext: ChannelHandlerContext = null
 
   def connect: Future[MySQLConnectionHandler] = {
@@ -72,11 +71,7 @@ class MySQLConnectionHandler(
     this.bootstrap.handler(new ChannelInitializer[io.netty.channel.Channel]() {
 
       override def initChannel(channel: io.netty.channel.Channel): Unit = {
-        channel.pipeline.addLast(
-          decoder,
-          encoder,
-          sendLongDataEncoder,
-          MySQLConnectionHandler.this)
+        channel.pipeline.addLast(decoder, encoder, sendLongDataEncoder, MySQLConnectionHandler.this)
       }
 
     })
@@ -112,7 +107,7 @@ class MySQLConnectionHandler(
           case ServerMessage.ColumnDefinition => {
             val message = m.asInstanceOf[ColumnDefinitionMessage]
 
-            if ( currentPreparedStatementHolder != null && this.currentPreparedStatementHolder.needsAny ) {
+            if (currentPreparedStatementHolder != null && this.currentPreparedStatementHolder.needsAny) {
               this.currentPreparedStatementHolder.add(message)
             }
 
@@ -129,8 +124,8 @@ class MySQLConnectionHandler(
             val items = new Array[Any](message.size)
 
             var x = 0
-            while ( x < message.size ) {
-              items(x) = if ( message(x) == null ) {
+            while (x < message.size) {
+              items(x) = if (message(x) == null) {
                 null
               } else {
                 val columnDescription = this.currentQuery.columnTypes(x)
@@ -143,10 +138,9 @@ class MySQLConnectionHandler(
           }
           case ServerMessage.BinaryRow => {
             val message = m.asInstanceOf[BinaryRowMessage]
-            this.currentQuery.addRow( this.binaryRowDecoder.decode(message.buffer, this.currentColumns ))
+            this.currentQuery.addRow(this.binaryRowDecoder.decode(message.buffer, this.currentColumns))
           }
-          case ServerMessage.ParamProcessingFinished => {
-          }
+          case ServerMessage.ParamProcessingFinished => {}
           case ServerMessage.ParamAndColumnProcessingFinished => {
             this.onColumnDefinitionFinished()
           }
@@ -161,7 +155,6 @@ class MySQLConnectionHandler(
     handlerDelegate.connected(ctx)
   }
 
-
   override def channelInactive(ctx: ChannelHandlerContext) {
     log.debug("Channel became inactive")
   }
@@ -170,7 +163,7 @@ class MySQLConnectionHandler(
     // unwrap CodecException if needed
     cause match {
       case t: CodecException => handleException(t.getCause)
-      case _ =>  handleException(cause)
+      case _                 => handleException(cause)
     }
 
   }
@@ -186,12 +179,12 @@ class MySQLConnectionHandler(
     this.currentContext = ctx
   }
 
-  def write( message : QueryMessage ) : ChannelFuture = {
+  def write(message: QueryMessage): ChannelFuture = {
     this.decoder.queryProcessStarted()
     writeAndHandleError(message)
   }
 
-  def sendPreparedStatement( query: String, values: Seq[Any] ): Future[ChannelFuture] = {
+  def sendPreparedStatement(query: String, values: Seq[Any]): Future[ChannelFuture] = {
     val preparedStatement = new PreparedStatement(query, values)
 
     this.currentColumns.clear()
@@ -200,24 +193,24 @@ class MySQLConnectionHandler(
     this.currentPreparedStatement = preparedStatement
 
     this.parsedStatements.get(preparedStatement.statement) match {
-      case Some( item ) => {
+      case Some(item) => {
         this.executePreparedStatement(item.statementId, item.columns.size, preparedStatement.values, item.parameters)
       }
       case None => {
         decoder.preparedStatementPrepareStarted()
-        writeAndHandleError( new PreparedStatementPrepareMessage(preparedStatement.statement) )
+        writeAndHandleError(new PreparedStatementPrepareMessage(preparedStatement.statement))
       }
     }
   }
 
-  def write( message : HandshakeResponseMessage ) : ChannelFuture = {
+  def write(message: HandshakeResponseMessage): ChannelFuture = {
     decoder.hasDoneHandshake = true
     writeAndHandleError(message)
   }
 
-  def write( message : AuthenticationSwitchResponse ) : ChannelFuture = writeAndHandleError(message)
+  def write(message: AuthenticationSwitchResponse): ChannelFuture = writeAndHandleError(message)
 
-  def write( message : QuitMessage ) : ChannelFuture = {
+  def write(message: QuitMessage): ChannelFuture = {
     writeAndHandleError(message)
   }
 
@@ -229,23 +222,26 @@ class MySQLConnectionHandler(
     this.currentQuery = null
   }
 
-  def isConnected : Boolean = {
-    if ( this.currentContext != null && this.currentContext.channel() != null ) {
+  def isConnected: Boolean = {
+    if (this.currentContext != null && this.currentContext.channel() != null) {
       this.currentContext.channel.isActive
     } else {
       false
     }
   }
 
-  private def executePreparedStatement( statementId : Array[Byte], columnsCount : Int, values : Seq[Any], parameters : Seq[ColumnDefinitionMessage] ): Future[ChannelFuture] = {
+  private def executePreparedStatement(statementId: Array[Byte],
+                                       columnsCount: Int,
+                                       values: Seq[Any],
+                                       parameters: Seq[ColumnDefinitionMessage]): Future[ChannelFuture] = {
     decoder.preparedStatementExecuteStarted(columnsCount, parameters.size)
     this.currentColumns.clear()
     this.currentParameters.clear()
 
     val (nonLongIndicesOpt, longValuesOpt) = values.zipWithIndex.map {
       case (Some(value), index) if isLong(value) => (None, Some(index, value))
-      case (value, index) if isLong(value) => (None, Some(index, value))
-      case (_, index) => (Some(index), None)
+      case (value, index) if isLong(value)       => (None, Some(index, value))
+      case (_, index)                            => (Some(index), None)
     }.unzip
     val nonLongIndices: Seq[Int] = nonLongIndicesOpt.flatten
     val longValues: Seq[(Int, Any)] = longValuesOpt.flatten
@@ -253,10 +249,11 @@ class MySQLConnectionHandler(
     if (longValues.nonEmpty) {
       val (firstIndex, firstValue) = longValues.head
       var channelFuture: Future[ChannelFuture] = sendLongParameter(statementId, firstIndex, firstValue)
-      longValues.tail foreach { case (index, value) =>
-        channelFuture = channelFuture.flatMap { _ =>
-          sendLongParameter(statementId, index, value)
-        }
+      longValues.tail foreach {
+        case (index, value) =>
+          channelFuture = channelFuture.flatMap { _ =>
+            sendLongParameter(statementId, index, value)
+          }
       }
       channelFuture flatMap { _ =>
         writeAndHandleError(new PreparedStatementExecuteMessage(statementId, values, nonLongIndices.toSet, parameters))
@@ -268,9 +265,9 @@ class MySQLConnectionHandler(
 
   private def isLong(value: Any): Boolean = {
     value match {
-      case v : Array[Byte] => v.length > SendLongDataEncoder.LONG_THRESHOLD
-      case v : ByteBuffer => v.remaining() > SendLongDataEncoder.LONG_THRESHOLD
-      case v : ByteBuf => v.readableBytes() > SendLongDataEncoder.LONG_THRESHOLD
+      case v: Array[Byte] => v.length > SendLongDataEncoder.LONG_THRESHOLD
+      case v: ByteBuffer  => v.remaining() > SendLongDataEncoder.LONG_THRESHOLD
+      case v: ByteBuf     => v.readableBytes() > SendLongDataEncoder.LONG_THRESHOLD
 
       case _ => false
     }
@@ -278,13 +275,13 @@ class MySQLConnectionHandler(
 
   private def sendLongParameter(statementId: Array[Byte], index: Int, longValue: Any): Future[ChannelFuture] = {
     longValue match {
-      case v : Array[Byte] =>
+      case v: Array[Byte] =>
         sendBuffer(Unpooled.wrappedBuffer(v), statementId, index)
 
-      case v : ByteBuffer =>
+      case v: ByteBuffer =>
         sendBuffer(Unpooled.wrappedBuffer(v), statementId, index)
 
-      case v : ByteBuf =>
+      case v: ByteBuf =>
         sendBuffer(v, statementId, index)
     }
   }
@@ -293,13 +290,13 @@ class MySQLConnectionHandler(
     writeAndHandleError(new SendLongDataMessage(statementId, buffer, paramId))
   }
 
-  private def onPreparedStatementPrepareResponse( message : PreparedStatementPrepareResponse ) {
-    this.currentPreparedStatementHolder = new PreparedStatementHolder( this.currentPreparedStatement.statement, message)
+  private def onPreparedStatementPrepareResponse(message: PreparedStatementPrepareResponse) {
+    this.currentPreparedStatementHolder = new PreparedStatementHolder(this.currentPreparedStatement.statement, message)
   }
 
   def onColumnDefinitionFinished() {
 
-    val columns = if ( this.currentPreparedStatementHolder != null ) {
+    val columns = if (this.currentPreparedStatementHolder != null) {
       this.currentPreparedStatementHolder.columns
     } else {
       this.currentColumns
@@ -307,8 +304,8 @@ class MySQLConnectionHandler(
 
     this.currentQuery = new MutableResultSet[ColumnDefinitionMessage](columns)
 
-    if ( this.currentPreparedStatementHolder != null ) {
-      this.parsedStatements.put( this.currentPreparedStatementHolder.statement, this.currentPreparedStatementHolder )
+    if (this.currentPreparedStatementHolder != null) {
+      this.parsedStatements.put(this.currentPreparedStatementHolder.statement, this.currentPreparedStatementHolder)
       this.executePreparedStatement(
         this.currentPreparedStatementHolder.statementId,
         this.currentPreparedStatementHolder.columns.size,
@@ -320,12 +317,12 @@ class MySQLConnectionHandler(
     }
   }
 
-  private def writeAndHandleError( message : Any ) : ChannelFuture =  {
-    if ( this.currentContext.channel().isActive ) {
+  private def writeAndHandleError(message: Any): ChannelFuture = {
+    if (this.currentContext.channel().isActive) {
       val res = this.currentContext.writeAndFlush(message)
 
       res.onFailure {
-        case e : Throwable => handleException(e)
+        case e: Throwable => handleException(e)
       }
 
       res
@@ -336,28 +333,31 @@ class MySQLConnectionHandler(
     }
   }
 
-  private def handleEOF( m : ServerMessage ) {
+  private def handleEOF(m: ServerMessage) {
     m match {
-      case eof : EOFMessage => {
+      case eof: EOFMessage => {
         val resultSet = this.currentQuery
         this.clearQueryState
 
-        if ( resultSet != null ) {
-          handlerDelegate.onResultSet( resultSet, eof )
+        if (resultSet != null) {
+          handlerDelegate.onResultSet(resultSet, eof)
         } else {
           handlerDelegate.onEOF(eof)
         }
       }
-      case authenticationSwitch : AuthenticationSwitchRequest => {
+      case authenticationSwitch: AuthenticationSwitchRequest => {
         handlerDelegate.switchAuthentication(authenticationSwitch)
       }
     }
   }
 
   def schedule(block: => Unit, duration: Duration): Unit = {
-    this.currentContext.channel().eventLoop().schedule(new Runnable {
-      override def run(): Unit = block
-    }, duration.toMillis, TimeUnit.MILLISECONDS)
+    this.currentContext
+      .channel()
+      .eventLoop()
+      .schedule(new Runnable {
+        override def run(): Unit = block
+      }, duration.toMillis, TimeUnit.MILLISECONDS)
   }
 
 }

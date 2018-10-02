@@ -32,13 +32,13 @@ trait PreparedStatementEncoderHelper {
   import PreparedStatementEncoderHelper.log
 
   def writeExecutePortal(
-                          statementIdBytes: Array[Byte],
-                          query: String,
-                          values: Seq[Any],
-                          encoder: ColumnEncoderRegistry,
-                          charset: Charset,
-                          writeDescribe: Boolean = false
-                          ): ByteBuf = {
+      statementIdBytes: Array[Byte],
+      query: String,
+      values: Seq[Any],
+      encoder: ColumnEncoderRegistry,
+      charset: Charset,
+      writeDescribe: Boolean = false
+  ): ByteBuf = {
 
     if (log.isDebugEnabled) {
       log.debug(s"Preparing execute portal to statement ($query) - values (${values.mkString(", ")}) - ${charset}")
@@ -90,7 +90,9 @@ trait PreparedStatementEncoderHelper {
     }
 
     if (log.isDebugEnabled) {
-      log.debug(s"Executing portal - statement id (${statementIdBytes.mkString("-")}) - statement ($query) - encoded values (${decodedValues.mkString(", ")}) - original values (${values.mkString(", ")})")
+      log.debug(
+        s"Executing portal - statement id (${statementIdBytes.mkString("-")}) - statement ($query) - encoded values (${decodedValues
+          .mkString(", ")}) - original values (${values.mkString(", ")})")
     }
 
     bindBuffer.writeShort(0)

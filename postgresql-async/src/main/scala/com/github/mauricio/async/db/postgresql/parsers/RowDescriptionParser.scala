@@ -57,8 +57,6 @@ Int16
 The format code being used for the field. Currently will be zero (text) or one (binary). In a RowDescription returned from the statement variant of Describe, the format code is not yet known and will always be zero.
   *
   */
-
-
 class RowDescriptionParser(charset: Charset) extends MessageParser {
 
   override def parseMessage(b: ByteBuf): ServerMessage = {
@@ -66,17 +64,16 @@ class RowDescriptionParser(charset: Charset) extends MessageParser {
     val columnsCount = b.readShort()
     val columns = new Array[PostgreSQLColumnData](columnsCount)
 
-    0.until(columnsCount).foreach {
-      index =>
-        columns(index) = new PostgreSQLColumnData(
-          name = ByteBufferUtils.readCString(b, charset),
-          tableObjectId = b.readInt(),
-          columnNumber = b.readShort(),
-          dataType = b.readInt(),
-          dataTypeSize = b.readShort(),
-          dataTypeModifier = b.readInt(),
-          fieldFormat = b.readShort()
-        )
+    0.until(columnsCount).foreach { index =>
+      columns(index) = new PostgreSQLColumnData(
+        name = ByteBufferUtils.readCString(b, charset),
+        tableObjectId = b.readInt(),
+        columnNumber = b.readShort(),
+        dataType = b.readInt(),
+        dataTypeSize = b.readShort(),
+        dataTypeModifier = b.readInt(),
+        fieldFormat = b.readShort()
+      )
     }
 
     new RowDescriptionMessage(columns)

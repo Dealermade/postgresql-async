@@ -27,10 +27,9 @@ object PreparedStatementOpeningEncoder {
   val log = Log.get[PreparedStatementOpeningEncoder]
 }
 
-class PreparedStatementOpeningEncoder(charset: Charset, encoder : ColumnEncoderRegistry)
-  extends Encoder
-  with PreparedStatementEncoderHelper
-{
+class PreparedStatementOpeningEncoder(charset: Charset, encoder: ColumnEncoderRegistry)
+    extends Encoder
+    with PreparedStatementEncoderHelper {
 
   import PreparedStatementOpeningEncoder.log
 
@@ -53,8 +52,9 @@ class PreparedStatementOpeningEncoder(charset: Charset, encoder : ColumnEncoderR
 
     parseBuffer.writeShort(columnCount)
 
-    if ( log.isDebugEnabled ) {
-      log.debug(s"Opening query (${m.query}) - statement id (${statementIdBytes.mkString("-")}) - selected types (${m.valueTypes.mkString(", ")}) - values (${m.values.mkString(", ")})")
+    if (log.isDebugEnabled) {
+      log.debug(s"Opening query (${m.query}) - statement id (${statementIdBytes.mkString("-")}) - selected types (${m.valueTypes
+        .mkString(", ")}) - values (${m.values.mkString(", ")})")
     }
 
     for (kind <- m.valueTypes) {

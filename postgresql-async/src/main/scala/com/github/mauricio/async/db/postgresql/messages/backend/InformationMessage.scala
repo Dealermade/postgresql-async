@@ -44,20 +44,20 @@ object InformationMessage {
     Routine -> "Routine"
   )
 
-  def fieldName(name: Char): String = Fields.getOrElse(name, {
-    name.toString
-  })
+  def fieldName(name: Char): String =
+    Fields.getOrElse(name, {
+      name.toString
+    })
 
 }
 
-abstract class InformationMessage(messageType: Byte, val fields: Map[Char, String])
-  extends ServerMessage(messageType) {
+abstract class InformationMessage(messageType: Byte, val fields: Map[Char, String]) extends ServerMessage(messageType) {
 
   def message: String = this.fields.getOrElse('M', "--- no message ---")
 
   override def toString: String = {
-    "%s(fields=%s)".format(this.getClass.getSimpleName, fields.map {
-      pair => InformationMessage.fieldName(pair._1) -> pair._2
+    "%s(fields=%s)".format(this.getClass.getSimpleName, fields.map { pair =>
+      InformationMessage.fieldName(pair._1) -> pair._2
     })
   }
 

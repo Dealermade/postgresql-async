@@ -30,4 +30,4 @@ object ClientMessage {
 
 }
 
-class ClientMessage ( val kind : Int ) extends KindedMessage
+class ClientMessage(val kind: Int) extends KindedMessage

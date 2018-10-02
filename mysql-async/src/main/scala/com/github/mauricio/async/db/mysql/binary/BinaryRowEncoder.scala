@@ -28,10 +28,10 @@ object BinaryRowEncoder {
   final val log = Log.get[BinaryRowEncoder]
 }
 
-class BinaryRowEncoder( charset : Charset ) {
+class BinaryRowEncoder(charset: Charset) {
 
   private final val stringEncoder = new StringEncoder(charset)
-  private final val encoders = Map[Class[_],BinaryEncoder](
+  private final val encoders = Map[Class[_], BinaryEncoder](
     classOf[String] -> this.stringEncoder,
     classOf[BigInt] -> this.stringEncoder,
     classOf[BigDecimal] -> this.stringEncoder,
@@ -62,30 +62,30 @@ class BinaryRowEncoder( charset : Charset ) {
     classOf[java.lang.Boolean] -> BooleanEncoder
   )
 
-  def encoderFor( v : Any ) : BinaryEncoder = {
+  def encoderFor(v: Any): BinaryEncoder = {
 
     this.encoders.get(v.getClass) match {
       case Some(encoder) => encoder
       case None => {
         v match {
-          case v : CharSequence => this.stringEncoder
-          case v : BigInt => this.stringEncoder
-          case v : java.math.BigInteger => this.stringEncoder
-          case v : BigDecimal => this.stringEncoder
-          case v : java.math.BigDecimal => this.stringEncoder
-          case v : ReadableDateTime => DateTimeEncoder
-          case v : ReadableInstant => ReadableInstantEncoder
-          case v : LocalDateTime => LocalDateTimeEncoder
-          case v : java.sql.Timestamp => SQLTimestampEncoder
-          case v : java.sql.Date => SQLDateEncoder
-          case v : java.util.Calendar => CalendarEncoder
-          case v : LocalDate => LocalDateEncoder
-          case v : LocalTime => LocalTimeEncoder
-          case v : java.sql.Time => SQLTimeEncoder
-          case v : scala.concurrent.duration.Duration => DurationEncoder
-          case v : java.util.Date => JavaDateEncoder
-          case v : ByteBuffer => ByteBufferEncoder
-          case v : ByteBuf => ByteBufEncoder
+          case v: CharSequence                       => this.stringEncoder
+          case v: BigInt                             => this.stringEncoder
+          case v: java.math.BigInteger               => this.stringEncoder
+          case v: BigDecimal                         => this.stringEncoder
+          case v: java.math.BigDecimal               => this.stringEncoder
+          case v: ReadableDateTime                   => DateTimeEncoder
+          case v: ReadableInstant                    => ReadableInstantEncoder
+          case v: LocalDateTime                      => LocalDateTimeEncoder
+          case v: java.sql.Timestamp                 => SQLTimestampEncoder
+          case v: java.sql.Date                      => SQLDateEncoder
+          case v: java.util.Calendar                 => CalendarEncoder
+          case v: LocalDate                          => LocalDateEncoder
+          case v: LocalTime                          => LocalTimeEncoder
+          case v: java.sql.Time                      => SQLTimeEncoder
+          case v: scala.concurrent.duration.Duration => DurationEncoder
+          case v: java.util.Date                     => JavaDateEncoder
+          case v: ByteBuffer                         => ByteBufferEncoder
+          case v: ByteBuf                            => ByteBufEncoder
         }
       }
     }

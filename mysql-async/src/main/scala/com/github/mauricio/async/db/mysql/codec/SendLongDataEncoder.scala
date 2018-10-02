@@ -12,13 +12,12 @@ object SendLongDataEncoder {
   val LONG_THRESHOLD = 1023
 }
 
-class SendLongDataEncoder
-    extends MessageToMessageEncoder[SendLongDataMessage](classOf[SendLongDataMessage]) {
+class SendLongDataEncoder extends MessageToMessageEncoder[SendLongDataMessage](classOf[SendLongDataMessage]) {
 
   import com.github.mauricio.async.db.mysql.codec.SendLongDataEncoder.log
 
   def encode(ctx: ChannelHandlerContext, message: SendLongDataMessage, out: java.util.List[Object]): Unit = {
-    if ( log.isTraceEnabled ) {
+    if (log.isTraceEnabled) {
       log.trace(s"Writing message ${message.toString}")
     }
 

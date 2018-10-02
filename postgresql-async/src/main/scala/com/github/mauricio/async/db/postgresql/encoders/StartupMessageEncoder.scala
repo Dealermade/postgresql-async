@@ -32,19 +32,18 @@ class StartupMessageEncoder(charset: Charset) {
     buffer.writeShort(3)
     buffer.writeShort(0)
 
-    startup.parameters.foreach {
-      pair =>
-        pair._2 match {
-          case value: String => {
-            ByteBufferUtils.writeCString(pair._1, buffer, charset)
-            ByteBufferUtils.writeCString(value, buffer, charset)
-          }
-          case Some(value) => {
-            ByteBufferUtils.writeCString(pair._1, buffer, charset)
-            ByteBufferUtils.writeCString(value.toString, buffer, charset)
-          }
-          case _ => {}
+    startup.parameters.foreach { pair =>
+      pair._2 match {
+        case value: String => {
+          ByteBufferUtils.writeCString(pair._1, buffer, charset)
+          ByteBufferUtils.writeCString(value, buffer, charset)
         }
+        case Some(value) => {
+          ByteBufferUtils.writeCString(pair._1, buffer, charset)
+          ByteBufferUtils.writeCString(value.toString, buffer, charset)
+        }
+        case _ => {}
+      }
     }
 
     buffer.writeByte(0)

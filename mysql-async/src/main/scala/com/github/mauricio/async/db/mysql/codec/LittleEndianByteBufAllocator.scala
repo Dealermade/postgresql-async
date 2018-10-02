@@ -23,8 +23,8 @@ object LittleEndianByteBufAllocator {
 }
 
 /**
- * Allocates ByteBuf which have LITTLE_ENDIAN order.
- */
+  * Allocates ByteBuf which have LITTLE_ENDIAN order.
+  */
 class LittleEndianByteBufAllocator extends ByteBufAllocator {
   private val allocator = new UnpooledByteBufAllocator(false)
 
@@ -52,7 +52,8 @@ class LittleEndianByteBufAllocator extends ByteBufAllocator {
 
   def directBuffer(initialCapacity: Int) = littleEndian(allocator.directBuffer(initialCapacity))
 
-  def directBuffer(initialCapacity: Int, maxCapacity: Int): ByteBuf = littleEndian(allocator.directBuffer(initialCapacity, maxCapacity))
+  def directBuffer(initialCapacity: Int, maxCapacity: Int): ByteBuf =
+    littleEndian(allocator.directBuffer(initialCapacity, maxCapacity))
 
   def compositeBuffer() = allocator.compositeBuffer()
 
@@ -66,7 +67,8 @@ class LittleEndianByteBufAllocator extends ByteBufAllocator {
 
   def compositeDirectBuffer(maxNumComponents: Int): CompositeByteBuf = allocator.compositeDirectBuffer(maxNumComponents)
 
-  def calculateNewCapacity(minNewCapacity: Int, maxCapacity: Int): Int = allocator.calculateNewCapacity(minNewCapacity, maxCapacity)
+  def calculateNewCapacity(minNewCapacity: Int, maxCapacity: Int): Int =
+    allocator.calculateNewCapacity(minNewCapacity, maxCapacity)
 
   private def littleEndian(b: ByteBuf) = b.order(ByteOrder.LITTLE_ENDIAN)
 

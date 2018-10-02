@@ -36,16 +36,15 @@ object PostgreSQLConnectionFactory {
 }
 
 /**
- *
- * Object responsible for creating new connection instances.
- *
- * @param configuration
- */
-
-class PostgreSQLConnectionFactory( 
-    val configuration : Configuration, 
-    group : EventLoopGroup = NettyUtils.DefaultEventLoopGroup,
-    executionContext : ExecutionContext = ExecutorServiceUtils.CachedExecutionContext ) extends ObjectFactory[PostgreSQLConnection] {
+  *
+  * Object responsible for creating new connection instances.
+  *
+  * @param configuration
+  */
+class PostgreSQLConnectionFactory(val configuration: Configuration,
+                                  group: EventLoopGroup = NettyUtils.DefaultEventLoopGroup,
+                                  executionContext: ExecutionContext = ExecutorServiceUtils.CachedExecutionContext)
+    extends ObjectFactory[PostgreSQLConnection] {
 
   import PostgreSQLConnectionFactory.log
 
@@ -61,48 +60,46 @@ class PostgreSQLConnectionFactory(
   }
 
   /**
-   *
-   * Validates by checking if the connection is still connected to the database or not.
-   *
-   * @param item an object produced by this pool
-   * @return
-   */
-
-  def validate( item : PostgreSQLConnection ) : Try[PostgreSQLConnection] = {
+    *
+    * Validates by checking if the connection is still connected to the database or not.
+    *
+    * @param item an object produced by this pool
+    * @return
+    */
+  def validate(item: PostgreSQLConnection): Try[PostgreSQLConnection] = {
     Try {
-      if ( item.isTimeouted ) {
+      if (item.isTimeouted) {
         throw new ConnectionTimeoutedException(item)
       }
-      if ( !item.isConnected || item.hasRecentError ) {
+      if (!item.isConnected || item.hasRecentError) {
         throw new ClosedChannelException()
-      } 
+      }
       item.validateIfItIsReadyForQuery("Trying to give back a connection that is not ready for query")
       item
     }
   }
 
   /**
-   *
-   * Tests whether we can still send a **SELECT 0** statement to the database.
-   *
-   * @param item an object produced by this pool
-   * @return
-   */
-
+    *
+    * Tests whether we can still send a **SELECT 0** statement to the database.
+    *
+    * @param item an object produced by this pool
+    * @return
+    */
   override def test(item: PostgreSQLConnection): Try[PostgreSQLConnection] = {
-    val result : Try[PostgreSQLConnection] = Try({
-      Await.result( item.sendQuery("SELECT 0"), configuration.testTimeout )
+    val result: Try[PostgreSQLConnection] = Try({
+      Await.result(item.sendQuery("SELECT 0"), configuration.testTimeout)
       item
     })
 
     result match {
       case Failure(e) => {
         try {
-          if ( item.isConnected ) {
+          if (item.isConnected) {
             item.disconnect
           }
         } catch {
-          case e : Exception => log.error("Failed disconnecting object", e)
+          case e: Exception => log.error("Failed disconnecting object", e)
         }
         result
       }

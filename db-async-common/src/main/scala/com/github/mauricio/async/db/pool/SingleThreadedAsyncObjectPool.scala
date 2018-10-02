@@ -43,11 +43,8 @@ object SingleThreadedAsyncObjectPool {
   * @param configuration
   * @tparam T type of the object this pool holds
   */
-
-class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
-                                       configuration: PoolConfiguration,
-                                       mainPool: Worker = Worker(),
-                                      ) extends AsyncObjectPool[T] {
+class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T], configuration: PoolConfiguration, mainPool: Worker = Worker(), )
+    extends AsyncObjectPool[T] {
 
   import SingleThreadedAsyncObjectPool.{Counter, log}
 
@@ -71,7 +68,6 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
     *
     * @return
     */
-
   def take: Future[T] = {
 
     if (this.closed) {
@@ -91,7 +87,6 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
     * @param item
     * @return
     */
-
   def giveBack(item: T): Future[AsyncObjectPool[T]] = {
     val promise = Promise[AsyncObjectPool[T]]()
     this.mainPool.action {
@@ -112,7 +107,7 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
         // It's already a failure but lets doublecheck why
         val isFromOurPool = (item match {
           case x: AnyRef => this.poolables.find(holder => x eq holder.item.asInstanceOf[AnyRef])
-          case _ => this.poolables.find(holder => item == holder.item)
+          case _         => this.poolables.find(holder => item == holder.item)
         }).isDefined
 
         if (isFromOurPool) {
@@ -168,7 +163,6 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
     * @param item
     * @param promise
     */
-
   private def addBack(item: T, promise: Promise[AsyncObjectPool[T]]) {
     this.poolables ::= new PoolableHolder[T](item)
 
@@ -186,7 +180,6 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
     *
     * @param promise
     */
-
   private def enqueuePromise(promise: Promise[T]) {
     if (this.waitQueue.size >= configuration.maxQueueSize) {
       val exception = new PoolExhaustedException("There are no objects available and the waitQueue is full")
@@ -214,7 +207,6 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
     *
     * @param promise
     */
-
   private def createOrReturnItem(promise: Promise[T]) {
     if (this.poolables.isEmpty) {
       try {
@@ -244,25 +236,23 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T],
     * to keep the connection alive.
     *
     */
-
   private def testObjects {
     val removals = new ArrayBuffer[PoolableHolder[T]]()
-    this.poolables.foreach {
-      poolable =>
-        this.factory.test(poolable.item) match {
-          case Success(item) => {
-            if (poolable.timeElapsed > configuration.maxIdle) {
-              log.debug("Connection was idle for {}, maxIdle is {}, removing it", poolable.timeElapsed, configuration.maxIdle)
-              removals += poolable
-              factory.destroy(poolable.item)
-            }
-          }
-          case Failure(e) => {
-            log.error("Failed to validate object", e)
+    this.poolables.foreach { poolable =>
+      this.factory.test(poolable.item) match {
+        case Success(item) => {
+          if (poolable.timeElapsed > configuration.maxIdle) {
+            log.debug("Connection was idle for {}, maxIdle is {}, removing it", poolable.timeElapsed, configuration.maxIdle)
             removals += poolable
             factory.destroy(poolable.item)
           }
         }
+        case Failure(e) => {
+          log.error("Failed to validate object", e)
+          removals += poolable
+          factory.destroy(poolable.item)
+        }
+      }
     }
     this.poolables = this.poolables.diff(removals)
   }

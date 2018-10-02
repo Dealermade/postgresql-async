@@ -34,11 +34,7 @@ class CredentialEncoder(charset: Charset) extends Encoder {
         credentialMessage.password.getBytes(charset)
       }
       case AuthenticationResponseType.MD5 => {
-        PasswordHelper.encode(
-          credentialMessage.username,
-          credentialMessage.password,
-          credentialMessage.salt.get,
-          charset)
+        PasswordHelper.encode(credentialMessage.username, credentialMessage.password, credentialMessage.salt.get, charset)
       }
     }
 

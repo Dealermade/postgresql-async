@@ -32,22 +32,22 @@ class MessageParsersRegistry(charset: Charset) {
 
   private def parserFor(t: Byte): MessageParser = {
     t match {
-      case ServerMessage.Authentication => AuthenticationStartupParser
-      case ServerMessage.BackendKeyData => BackendKeyDataParser
-      case ServerMessage.BindComplete => ReturningMessageParser.BindCompleteMessageParser
-      case ServerMessage.CloseComplete => ReturningMessageParser.CloseCompleteMessageParser
-      case ServerMessage.CommandComplete => this.commandCompleteParser
-      case ServerMessage.DataRow => DataRowParser
-      case ServerMessage.Error => this.errorParser
-      case ServerMessage.EmptyQueryString => ReturningMessageParser.EmptyQueryStringMessageParser
-      case ServerMessage.NoData => ReturningMessageParser.NoDataMessageParser
-      case ServerMessage.Notice => this.noticeParser
+      case ServerMessage.Authentication       => AuthenticationStartupParser
+      case ServerMessage.BackendKeyData       => BackendKeyDataParser
+      case ServerMessage.BindComplete         => ReturningMessageParser.BindCompleteMessageParser
+      case ServerMessage.CloseComplete        => ReturningMessageParser.CloseCompleteMessageParser
+      case ServerMessage.CommandComplete      => this.commandCompleteParser
+      case ServerMessage.DataRow              => DataRowParser
+      case ServerMessage.Error                => this.errorParser
+      case ServerMessage.EmptyQueryString     => ReturningMessageParser.EmptyQueryStringMessageParser
+      case ServerMessage.NoData               => ReturningMessageParser.NoDataMessageParser
+      case ServerMessage.Notice               => this.noticeParser
       case ServerMessage.NotificationResponse => this.notificationResponseParser
-      case ServerMessage.ParameterStatus => this.parameterStatusParser
-      case ServerMessage.ParseComplete => ReturningMessageParser.ParseCompleteMessageParser
-      case ServerMessage.RowDescription => this.rowDescriptionParser
-      case ServerMessage.ReadyForQuery => ReadyForQueryParser
-      case _ => throw new ParserNotAvailableException(t)
+      case ServerMessage.ParameterStatus      => this.parameterStatusParser
+      case ServerMessage.ParseComplete        => ReturningMessageParser.ParseCompleteMessageParser
+      case ServerMessage.RowDescription       => this.rowDescriptionParser
+      case ServerMessage.ReadyForQuery        => ReadyForQueryParser
+      case _                                  => throw new ParserNotAvailableException(t)
     }
   }
 

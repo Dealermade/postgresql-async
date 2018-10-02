@@ -20,5 +20,4 @@ object AuthenticationChallengeCleartextMessage {
   val Instance = new AuthenticationChallengeCleartextMessage()
 }
 
-class AuthenticationChallengeCleartextMessage
-  extends AuthenticationChallengeMessage(AuthenticationResponseType.Cleartext, None)
+class AuthenticationChallengeCleartextMessage extends AuthenticationChallengeMessage(AuthenticationResponseType.Cleartext, None)

@@ -16,5 +16,4 @@
 
 package com.github.mauricio.async.db.mysql.message.server
 
-case class ParamProcessingFinishedMessage( eofMessage : EOFMessage )
-  extends ServerMessage( ServerMessage.ParamProcessingFinished )
+case class ParamProcessingFinishedMessage(eofMessage: EOFMessage) extends ServerMessage(ServerMessage.ParamProcessingFinished)

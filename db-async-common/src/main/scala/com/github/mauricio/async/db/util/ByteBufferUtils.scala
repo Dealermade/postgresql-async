@@ -38,7 +38,7 @@ object ByteBufferUtils {
     b.writeByte(0)
   }
 
-  def writeSizedString( content : String, b : ByteBuf, charset : Charset ) {
+  def writeSizedString(content: String, b: ByteBuf, charset: Charset) {
     val bytes = content.getBytes(charset)
     b.writeByte(bytes.length)
     b.writeBytes(bytes)
@@ -64,8 +64,8 @@ object ByteBufferUtils {
     result
   }
 
-  def readUntilEOF( b : ByteBuf, charset : Charset ) : String = {
-    if ( b.readableBytes() == 0 ) {
+  def readUntilEOF(b: ByteBuf, charset: Charset): String = {
+    if (b.readableBytes() == 0) {
       return ""
     }
 
@@ -76,7 +76,7 @@ object ByteBufferUtils {
     var offset = 1
 
     while (byte != 0) {
-      if ( b.readableBytes() > 0 ) {
+      if (b.readableBytes() > 0) {
         byte = b.readByte()
         count += 1
       } else {
@@ -94,28 +94,28 @@ object ByteBufferUtils {
     result
   }
 
-  def read3BytesInt( b : ByteBuf ) : Int = {
+  def read3BytesInt(b: ByteBuf): Int = {
     (b.readByte() & 0xff) | ((b.readByte() & 0xff) << 8) | ((b.readByte() & 0xff) << 16)
   }
 
-  def write3BytesInt( b : ByteBuf, value : Int ) {
-    b.writeByte( value & 0xff )
-    b.writeByte( value >>> 8 )
-    b.writeByte( value >>> 16 )
+  def write3BytesInt(b: ByteBuf, value: Int) {
+    b.writeByte(value & 0xff)
+    b.writeByte(value >>> 8)
+    b.writeByte(value >>> 16)
   }
 
-  def writePacketLength(buffer: ByteBuf, sequence : Int = 1) {
+  def writePacketLength(buffer: ByteBuf, sequence: Int = 1) {
     val length = buffer.writerIndex() - 4
     buffer.markWriterIndex()
     buffer.writerIndex(0)
 
-    write3BytesInt( buffer, length )
+    write3BytesInt(buffer, length)
     buffer.writeByte(sequence)
 
     buffer.resetWriterIndex()
   }
 
-  def packetBuffer( estimate : Int = 1024  ) : ByteBuf = {
+  def packetBuffer(estimate: Int = 1024): ByteBuf = {
     val buffer = mysqlBuffer(estimate)
 
     buffer.writeInt(0)
@@ -123,7 +123,7 @@ object ByteBufferUtils {
     buffer
   }
 
-  def mysqlBuffer( estimate : Int = 1024 ) : ByteBuf = {
+  def mysqlBuffer(estimate: Int = 1024): ByteBuf = {
     Unpooled.buffer(estimate).order(ByteOrder.LITTLE_ENDIAN)
   }
 

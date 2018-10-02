@@ -22,7 +22,7 @@ import com.github.mauricio.async.db.mysql.message.server.{ColumnProcessingFinish
 object ColumnProcessingFinishedDecoder extends MessageDecoder {
 
   def decode(buffer: ByteBuf): ServerMessage = {
-    new ColumnProcessingFinishedMessage( EOFMessageDecoder.decode(buffer) )
+    new ColumnProcessingFinishedMessage(EOFMessageDecoder.decode(buffer))
   }
 
 }

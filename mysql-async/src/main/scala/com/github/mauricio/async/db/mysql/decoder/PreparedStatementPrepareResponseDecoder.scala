@@ -29,7 +29,7 @@ class PreparedStatementPrepareResponseDecoder extends MessageDecoder {
     //val dump = MySQLHelper.dumpAsHex(buffer)
     //log.debug("prepared statement response dump is \n{}", dump)
 
-    val statementId = Array[Byte]( buffer.readByte(), buffer.readByte(), buffer.readByte(), buffer.readByte() )
+    val statementId = Array[Byte](buffer.readByte(), buffer.readByte(), buffer.readByte(), buffer.readByte())
     val columnsCount = buffer.readUnsignedShort()
     val paramsCount = buffer.readUnsignedShort()
 

@@ -17,7 +17,12 @@
 package com.github.mauricio.async.db.postgresql.parsers
 
 import com.github.mauricio.async.db.exceptions.UnsupportedAuthenticationMethodException
-import com.github.mauricio.async.db.postgresql.messages.backend.{AuthenticationChallengeMD5, AuthenticationChallengeCleartextMessage, AuthenticationOkMessage, ServerMessage}
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  AuthenticationChallengeMD5,
+  AuthenticationChallengeCleartextMessage,
+  AuthenticationOkMessage,
+  ServerMessage
+}
 import io.netty.buffer.ByteBuf
 
 object AuthenticationStartupParser extends MessageParser {
@@ -35,7 +40,7 @@ object AuthenticationStartupParser extends MessageParser {
     val authenticationType = b.readInt()
 
     authenticationType match {
-      case AuthenticationOk => AuthenticationOkMessage.Instance
+      case AuthenticationOk                => AuthenticationOkMessage.Instance
       case AuthenticationCleartextPassword => AuthenticationChallengeCleartextMessage.Instance
       case AuthenticationMD5Password => {
         val bytes = new Array[Byte](b.readableBytes())

@@ -126,4 +126,4 @@ object ColumnTypes {
     public static final int XML = 142;
     public static final int XML_ARRAY = 143;
 
-*/
+ */

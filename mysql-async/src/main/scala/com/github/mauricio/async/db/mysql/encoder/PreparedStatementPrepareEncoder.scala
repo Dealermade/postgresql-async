@@ -21,14 +21,14 @@ import com.github.mauricio.async.db.mysql.message.client.{PreparedStatementPrepa
 import com.github.mauricio.async.db.util.ByteBufferUtils
 import java.nio.charset.Charset
 
-class PreparedStatementPrepareEncoder( charset : Charset ) extends MessageEncoder {
+class PreparedStatementPrepareEncoder(charset: Charset) extends MessageEncoder {
 
   def encode(message: ClientMessage): ByteBuf = {
     val m = message.asInstanceOf[PreparedStatementPrepareMessage]
     val statement = m.statement.getBytes(charset)
-    val buffer = ByteBufferUtils.packetBuffer( 4 + 1 + statement.size)
-    buffer.writeByte( m.kind )
-    buffer.writeBytes( statement )
+    val buffer = ByteBufferUtils.packetBuffer(4 + 1 + statement.size)
+    buffer.writeByte(m.kind)
+    buffer.writeBytes(statement)
 
     buffer
   }

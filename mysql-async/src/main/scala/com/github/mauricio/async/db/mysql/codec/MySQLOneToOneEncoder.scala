@@ -78,7 +78,7 @@ class MySQLOneToOneEncoder(charset: Charset, charsetMapper: CharsetMapper)
 
     sequence += 1
 
-    if ( log.isTraceEnabled ) {
+    if (log.isTraceEnabled) {
       log.trace(s"Writing message ${message.getClass.getName} - \n${BufferDumper.dumpAsHex(result)}")
     }
 
