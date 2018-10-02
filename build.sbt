@@ -2,55 +2,50 @@ val commonName = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName = "mysql-async"
 
-lazy val root = Project(
-  id = "db-async-base",
-  base = file("."),
-  settings = baseSettings ++ Seq(
-    publish := (),
-    publishLocal := (),
+lazy val root = (project in file("."))
+  .settings(
+    baseSettings,
+    publish := Unit,
+    publishLocal := Unit,
     publishArtifact := false
-  ),
-  aggregate = Seq(common, postgresql, mysql)
-)
+  )
+  .aggregate(common, postgresql, mysql)
 
-lazy val common = Project(
-  id = commonName,
-  base = file(commonName),
-  settings = baseSettings ++ Seq(
+lazy val common = (project in file(commonName))
+  .withId(commonName)
+  .settings(
+    baseSettings,
     name := commonName,
     libraryDependencies ++= commonDependencies
   )
-)
 
-lazy val postgresql = Project(
-  id = postgresqlName,
-  base = file(postgresqlName),
-  settings = baseSettings ++ Seq(
+lazy val postgresql = (project in file(postgresqlName))
+  .withId(postgresqlName)
+  .settings(
+    baseSettings,
     name := postgresqlName,
     libraryDependencies ++= implementationDependencies
-  )
-) dependsOn (common)
+  ).dependsOn(common)
 
-lazy val mysql = Project(
-  id = mysqlName,
-  base = file(mysqlName),
-  settings = baseSettings ++ Seq(
+lazy val mysql = (project in file(mysqlName))
+  .withId(mysqlName)
+  .settings(
+    baseSettings,
     name := mysqlName,
     libraryDependencies ++= implementationDependencies
-  )
-) dependsOn (common)
+  ).dependsOn(common)
 
 
-lazy val commonVersion = "0.2.22-IQ.5"
-lazy val projectScalaVersion = "2.12.7"
-lazy val specs2Version = "4.3.4"
+val commonVersion = "0.2.22-IQ.5"
+val projectScalaVersion = "2.12.7"
+val specs2Version = "4.3.4"
 
-lazy val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
-lazy val specs2JunitDependency = "org.specs2" %% "specs2-junit" % specs2Version % "test"
-lazy val specs2MockDependency = "org.specs2" %% "specs2-mock" % specs2Version % "test"
-lazy val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
+val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
+val specs2JunitDependency = "org.specs2" %% "specs2-junit" % specs2Version % "test"
+val specs2MockDependency = "org.specs2" %% "specs2-mock" % specs2Version % "test"
+val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
 
-lazy val commonDependencies = Seq(
+val commonDependencies = Seq(
   "org.slf4j" % "slf4j-api" % "1.7.25",
   "joda-time" % "joda-time" % "2.10",
   "org.joda" % "joda-convert" % "2.1.1",
@@ -62,12 +57,12 @@ lazy val commonDependencies = Seq(
   logbackDependency
 )
 
-lazy val implementationDependencies = Seq(
+val implementationDependencies = Seq(
   specs2Dependency,
   logbackDependency
 )
 
-lazy val baseSettings = Defaults.defaultSettings ++ Seq(
+val baseSettings = Seq(
   scalaVersion := projectScalaVersion,
   scalacOptions :=
     Opts.compile.encoding("UTF8")
@@ -75,14 +70,14 @@ lazy val baseSettings = Defaults.defaultSettings ++ Seq(
       :+ Opts.compile.unchecked
       :+ "-feature"
   ,
-  testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "sequential"),
-  scalacOptions in doc := Seq("-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
+  Test / testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential"),
+  doc / scalacOptions := Seq("-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
   crossScalaVersions := Seq(projectScalaVersion, "2.10.6", "2.11.8", "2.12.7"),
   javacOptions := Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF8"),
   organization := "com.github.mauricio",
   version := commonVersion,
   parallelExecution := false,
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   publishMavenStyle := true,
   pomIncludeRepository := {
     _ => false
@@ -90,7 +85,7 @@ lazy val baseSettings = Defaults.defaultSettings ++ Seq(
   credentials += {
     Seq("build.publish.host", "build.publish.user", "build.publish.password") map sys.props.get match {
       case Seq(Some(host), Some(user), Some(pass)) ⇒ Credentials("Sonatype Nexus Repository Manager", host, user, pass)
-      case _                                       ⇒ Credentials(Path.userHome / ".ivy2" / ".credentials")
+      case _ ⇒ Credentials(Path.userHome / ".ivy2" / ".credentials")
     }
   },
   pomExtra := (
