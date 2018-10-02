@@ -78,6 +78,7 @@ val baseSettings = Seq(
   parallelExecution := false,
   Test / publishArtifact := false,
   Test / fork := true,
+  Test / baseDirectory := file("."),
   publishMavenStyle := true,
   pomIncludeRepository := {
     _ => false
