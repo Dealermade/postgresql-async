@@ -129,7 +129,7 @@ class ConnectionPoolSpec extends Specification with DatabaseTestHelper {
 
   }
 
-  def withPool[R](fn: (ConnectionPool[PostgreSQLConnection]) => R): R = {
+  def withPool[R](fn: ConnectionPool[PostgreSQLConnection] => R): R = {
 
     val pool = new ConnectionPool(new PostgreSQLConnectionFactory(defaultConfiguration), PoolConfiguration.Default)
     try {
@@ -143,8 +143,8 @@ class ConnectionPoolSpec extends Specification with DatabaseTestHelper {
   val configWithPgBouncer: Configuration = defaultConfiguration.copy(host = "0.0.0.0", port = 6432)
 
   // it will work because one unnamed statement will rewrite another one inside of pg-bouncer session
-  def withUnnamedStatementsPools[R](fn1: (ConnectionPool[PostgreSQLConnection]) => R)(
-      fn2: (ConnectionPool[PostgreSQLConnection]) => R): (R, R) = {
+  def withUnnamedStatementsPools[R](fn1: ConnectionPool[PostgreSQLConnection] => R)(
+      fn2: ConnectionPool[PostgreSQLConnection] => R): (R, R) = {
 
     val pool1 = new ConnectionPool(new PostgreSQLConnectionFactory(configWithPgBouncer.copy(isPrepareStatements = false)),
                                    PoolConfiguration.Default)
@@ -160,8 +160,8 @@ class ConnectionPoolSpec extends Specification with DatabaseTestHelper {
   }
 
   // it will be failed due to identical prepared statements name inside of pg-bouncer session
-  def withNamedStatementsPools[R](fn1: (ConnectionPool[PostgreSQLConnection]) => R)(
-      fn2: (ConnectionPool[PostgreSQLConnection]) => R): (R, R) = {
+  def withNamedStatementsPools[R](fn1: ConnectionPool[PostgreSQLConnection] => R)(
+      fn2: ConnectionPool[PostgreSQLConnection] => R): (R, R) = {
 
     val pool1 = new ConnectionPool(new PostgreSQLConnectionFactory(configWithPgBouncer.copy(isPrepareStatements = true)),
                                    PoolConfiguration.Default)

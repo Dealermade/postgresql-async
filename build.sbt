@@ -77,6 +77,7 @@ val baseSettings = Seq(
   version := commonVersion,
   parallelExecution := false,
   Test / publishArtifact := false,
+  Test / fork := true,
   publishMavenStyle := true,
   pomIncludeRepository := {
     _ => false
