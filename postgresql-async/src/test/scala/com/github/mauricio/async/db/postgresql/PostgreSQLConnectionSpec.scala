@@ -19,18 +19,16 @@ package com.github.mauricio.async.db.postgresql
 import java.nio.ByteBuffer
 
 import com.github.mauricio.async.db.column.{DateEncoderDecoder, TimeEncoderDecoder, TimestampEncoderDecoder}
-import com.github.mauricio.async.db.exceptions.UnsupportedAuthenticationMethodException
-import com.github.mauricio.async.db.postgresql.exceptions.{GenericDatabaseException, QueryMustNotBeNullOrEmptyException}
-import com.github.mauricio.async.db.postgresql.messages.backend.InformationMessage
+import com.github.mauricio.async.db.postgresql.exceptions.QueryMustNotBeNullOrEmptyException
+import com.github.mauricio.async.db.postgresql.util.URLParser
 import com.github.mauricio.async.db.util.Log
 import com.github.mauricio.async.db.{Configuration, Connection, QueryResult}
 import io.netty.buffer.Unpooled
 import org.joda.time.LocalDateTime
 import org.specs2.mutable.Specification
 
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object PostgreSQLConnectionSpec {
   val log = Log.get[PostgreSQLConnectionSpec]
@@ -115,10 +113,9 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
 
     "connect to database and setup search path" in {
       withHandler(
-        com.github.mauricio.async.db.postgresql.util.URLParser.DEFAULT.copy(currentSchema = Some("test_search_path")), {
-          handler =>
-            val result = executeQuery(handler, this.selectSearchPath)
-            result.rows.get.size === 0
+        URLParser.DEFAULT.copy(currentSchema = Some("test_search_path")), { handler =>
+          val result = executeQuery(handler, this.selectSearchPath)
+          result.rows.get.size === 0
         }
       )
     }
@@ -262,14 +259,12 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
 
       val handler: Connection = new PostgreSQLConnection(defaultConfiguration)
       val result: Future[QueryResult] = handler.connect
-        .map(parameters => handler)
+        .map(_ => handler)
         .flatMap(connection => connection.sendQuery("BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ"))
-        .flatMap(query => handler.sendQuery("SELECT 0"))
+        .flatMap(_ => handler.sendQuery("SELECT 0"))
         .flatMap(query => handler.sendQuery("COMMIT").map(value => query))
 
-      val queryResult: QueryResult = Await.result(result, Duration(5, SECONDS))
-
-      queryResult.rows.get(0)(0) === 0
+      await(result).rows.get(0)(0) === 0
 
     }
 
@@ -306,7 +301,7 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
 
     }
 
-    "execute an whitespace query" in {
+    "execute a whitespace query" in {
 
       withHandler { handler =>
         executeQuery(handler, "   ").rows === None

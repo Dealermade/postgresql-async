@@ -17,7 +17,7 @@
 package com.github.mauricio.async.db.postgresql
 
 import java.io.File
-import java.util.concurrent.{TimeUnit, TimeoutException}
+import java.util.concurrent.TimeoutException
 
 import com.github.mauricio.async.db.{Configuration, Connection, QueryResult, SSLConfiguration}
 
@@ -103,7 +103,7 @@ trait DatabaseTestHelper {
   }
 
   def await[T](future: Future[T]): T = {
-    Await.result(future, Duration(5, TimeUnit.SECONDS))
+    Await.result(future, 5 seconds)
   }
 
 }

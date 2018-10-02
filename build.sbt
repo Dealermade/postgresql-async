@@ -68,6 +68,7 @@ val baseSettings = Seq(
       :+ Opts.compile.deprecation
       :+ Opts.compile.unchecked
       :+ "-feature"
+      :+ "-language:postfixOps"
   ,
   Test / testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential"),
   doc / scalacOptions := Seq("-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
