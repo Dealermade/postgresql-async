@@ -31,7 +31,7 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-"com.github.mauricio" %% "postgresql-async" % "0.2.21"
+"com.github.mauricio" %% "postgresql-async" % "0.3.0-SNAPSHOT"
 ```
 
 Or Maven:
@@ -39,24 +39,15 @@ Or Maven:
 ```xml
 <dependency>
   <groupId>com.github.mauricio</groupId>
-  <artifactId>postgresql-async_2.11</artifactId>
-  <version>0.2.21</version>
-</dependency>
-```
-
-respectively for Scala 2.12:
-```xml
-<dependency>
-  <groupId>com.github.mauricio</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
-  <version>0.2.21</version>
+  <version>0.3.0-SNAPSHOT</version>
 </dependency>
 ```
 
 And if you're into MySQL:
 
 ```scala
-"com.github.mauricio" %% "mysql-async" % "0.2.21"
+"com.github.mauricio" %% "mysql-async" % "0.3.0-SNAPSHOT"
 ```
 
 Or Maven:
@@ -64,16 +55,8 @@ Or Maven:
 ```xml
 <dependency>
   <groupId>com.github.mauricio</groupId>
-  <artifactId>mysql-async_2.11</artifactId>
-  <version>0.2.21</version>
-</dependency>
-```
-respectively for Scala 2.12:
-```xml
-<dependency>
-  <groupId>com.github.mauricio</groupId>
   <artifactId>mysql-async_2.12</artifactId>
-  <version>0.2.21</version>
+  <version>0.3.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -146,7 +129,7 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 Represents a connection to the database. This is the **root** object you will be using in your application. You will
 find three classes that implement this trait, `PostgreSQLConnection`, `MySQLConnection` and `ConnectionPool`.
 The difference between them is that `ConnectionPool` is, as the name implies, a pool of connections and you
-need to give it an connection factory so it can create connections and manage them.
+need to give it a connection factory so it can create connections and manage them.
 
 To create both you will need a `Configuration` object with your database details. You can create one manually or
 create one from a JDBC or Heroku database URL using the `URLParser` object.
@@ -180,12 +163,12 @@ The `?` (question mark) in the query is a parameter placeholder, it allows you t
 query without having to escape stuff yourself. The driver itself will make sure this parameter is delivered to the
 database in a safe way so you don't have to worry about SQL injection attacks.
 
-The basic numbers, Joda Time date, time, timestamp objects, strings and arrays of these objects are all valid values
+The basic numbers, JodaTime date, time, timestamp objects, strings and arrays of these objects are all valid values
 as prepared statement parameters and they will be encoded to their respective database types. Remember that not all databases
 are created equal, so not every type will work or might work in unexpected ways. For instance, MySQL doesn't have array
 types, so, if you send an array or collection to MySQL it won't work.
 
-Remember that parameters are positional the order they show up at query should be the same as the one in the array or
+Remember that parameters are positional. The order they show up at query should be the same as the one in the array or
 sequence given to the method call.
 
 ## Transactions
@@ -286,8 +269,7 @@ bug you want to fix and send a pull request back. If you thing the change is too
 please create an issue **before** you start working on it so we can discuss what you're trying to do.
 
 You should be easily able to build this project in your favorite IDE since it's built by [SBT](http://www.scala-sbt.org/)
-using a plugin that generates your IDE's project files. You can use [sbt-idea](https://github.com/mpeltonen/sbt-idea)
-for IntelliJ Idea and [sbteclipse](https://github.com/typesafehub/sbteclipse) for Eclipse integration.
+importing the project using IntelliJ IDEA or Eclipse.
 
 [Check our list of contributors!](https://github.com/mauricio/postgresql-async/graphs/contributors)
 

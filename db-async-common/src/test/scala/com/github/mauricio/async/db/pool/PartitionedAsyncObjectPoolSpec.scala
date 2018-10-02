@@ -172,9 +172,6 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
                     for (_ <- 0 until maxQueueSize)
                         pool.take
 
-                    println(s"inUse: ${pool.inUse.size}")
-                    println(s"queued: ${pool.queued.size}")
-                    println(s"availables: ${pool.availables.size}")
                     Thread.sleep(100)
                     pool.inUse.size mustEqual maxObjects
                     pool.queued.size mustEqual maxQueueSize
