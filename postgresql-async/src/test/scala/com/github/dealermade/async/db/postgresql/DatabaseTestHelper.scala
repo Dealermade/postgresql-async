@@ -58,13 +58,12 @@ trait DatabaseTestHelper {
   def withHandler[T](configuration: Configuration, fn: PostgreSQLConnection => T): T = {
 
     val handler = new PostgreSQLConnection(configuration)
+    await(handler.connect)
 
     try {
-      await(handler.connect)
       fn(handler)
     } finally {
-      // TODO what timeout we are expecting here, if we don't wait for the Future completion ???
-      handleTimeout(handler, handler.disconnect)
+      handleTimeout(handler, { await(handler.disconnect) })
     }
 
   }
