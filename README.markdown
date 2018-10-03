@@ -202,10 +202,10 @@ it [here](http://mauricio.github.io/2013/04/29/async-database-access-with-postgr
 
 In short, what you would usually do is:
 ```scala
-import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
-import com.github.mauricio.async.db.postgresql.util.URLParser
-import com.github.mauricio.async.db.util.ExecutorServiceUtils.CachedExecutionContext
-import com.github.mauricio.async.db.{RowData, QueryResult, Connection}
+import com.github.dealermade.async.db.postgresql.PostgreSQLConnection
+import com.github.dealermade.async.db.postgresql.util.URLParser
+import com.github.dealermade.async.db.util.ExecutorServiceUtils.CachedExecutionContext
+import com.github.dealermade.async.db.{RowData, QueryResult, Connection}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
