@@ -3,6 +3,7 @@ val postgresqlName = "postgresql-async"
 val mysqlName = "mysql-async"
 
 lazy val root = (project in file("."))
+  .withId("db-async")
   .settings(
     baseSettings,
     publish := Unit,
