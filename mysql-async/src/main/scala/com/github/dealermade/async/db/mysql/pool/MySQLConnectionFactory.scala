@@ -34,7 +34,7 @@ object MySQLConnectionFactory {
 
 /**
   *
-  * Connection pool factory for [[com.github.mauricio.async.db.mysql.MySQLConnection]] objects.
+  * Connection pool factory for [[com.github.dealermade.async.db.mysql.MySQLConnection]] objects.
   *
   * @param configuration a valid configuration to connect to a MySQL server.
   *

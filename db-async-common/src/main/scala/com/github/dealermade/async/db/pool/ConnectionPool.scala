@@ -23,7 +23,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   *
   * Pool specialized in database connections that also simplifies connection handling by
-  * implementing the [[com.github.mauricio.async.db.Connection]] trait and saving clients from having to implement
+  * implementing the [[com.github.dealermade.async.db.Connection]] trait and saving clients from having to implement
   * the "give back" part of pool management. This lets you do your job without having to worry
   * about managing and giving back connection objects to the pool.
   *

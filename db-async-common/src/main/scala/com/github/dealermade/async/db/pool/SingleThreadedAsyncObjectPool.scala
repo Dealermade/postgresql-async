@@ -33,7 +33,7 @@ object SingleThreadedAsyncObjectPool {
 
 /**
   *
-  * Implements an [[com.github.mauricio.async.db.pool.AsyncObjectPool]] using a single thread from a
+  * Implements an [[com.github.dealermade.async.db.pool.AsyncObjectPool]] using a single thread from a
   * fixed executor service as an event loop to cause all calls to be sequential.
   *
   * Once you are done with this object remember to call it's close method to clean up the thread pool and

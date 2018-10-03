@@ -57,14 +57,14 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-"com.github.mauricio" %% "postgresql-async" % "0.3.0-SNAPSHOT"
+"com.github.dealermade" %% "postgresql-async" % "0.3.0-SNAPSHOT"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.mauricio</groupId>
+  <groupId>com.github.dealermade</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
   <version>0.3.0-SNAPSHOT</version>
 </dependency>
@@ -73,14 +73,14 @@ Or Maven:
 And if you're into MySQL:
 
 ```scala
-"com.github.mauricio" %% "mysql-async" % "0.3.0-SNAPSHOT"
+"com.github.dealermade" %% "mysql-async" % "0.3.0-SNAPSHOT"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.mauricio</groupId>
+  <groupId>com.github.dealermade</groupId>
   <artifactId>mysql-async_2.12</artifactId>
   <version>0.3.0-SNAPSHOT</version>
 </dependency>
@@ -145,7 +145,7 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 - checkout the source code
 - find bugs, find places where performance can be improved
 - check the **What is missing** piece
-- check the [issues page](https://github.com/mauricio/postgresql-async/issues) for bugs or new features
+- check the [issues page](https://github.com/dealermade/postgresql-async/issues) for bugs or new features
 - send a pull request with specs
 
 ## Main public interface
@@ -297,7 +297,7 @@ please create an issue **before** you start working on it so we can discuss what
 You should be easily able to build this project in your favorite IDE since it's built by [SBT](http://www.scala-sbt.org/)
 importing the project using IntelliJ IDEA or Eclipse.
 
-[Check our list of contributors!](https://github.com/mauricio/postgresql-async/graphs/contributors)
+[Check our list of contributors!](https://github.com/dealermade/postgresql-async/graphs/contributors)
 
 ## Licence
 

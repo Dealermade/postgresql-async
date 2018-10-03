@@ -105,12 +105,6 @@ val baseSettings = Seq(
   ),
   ThisBuild / developers := List(
     Developer(
-      id = "mauricio",
-      name = "Maurício Linhares",
-      email = "mauricio.linhares@gmail.com",
-      url = url("https://github.com/mauricio")
-    ),
-    Developer(
       id = "alexbezhan",
       name = "Alex Bezhan",
       email = "alex@dealermade.com",
