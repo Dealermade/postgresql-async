@@ -86,7 +86,7 @@ abstract class AbstractURIParser {
       parseOrDie(url, charset)
     } catch {
       case e: Exception =>
-        logger.warn(s"Connection url '$url' could not be parsed.", e)
+        logger.warn(s"Connection url '$url' could not be parsed. Using default.", e)
         // Fallback to default to maintain current behavior
         DEFAULT
     }
