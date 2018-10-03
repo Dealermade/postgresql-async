@@ -1,3 +1,6 @@
+addCommandAlias("ci-all",  ";+clean ;+compile ;+test ;+package")
+addCommandAlias("release", ";+publishSigned ;sonatypeReleaseAll")
+
 val commonName = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName = "mysql-async"
@@ -37,7 +40,7 @@ lazy val mysql = (project in file(mysqlName))
   ).dependsOn(common)
 
 
-val commonVersion = "0.3.0"
+val commonVersion = "0.3.0-SNAPSHOT"
 val specs2Version = "4.3.4"
 
 val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
@@ -62,7 +65,7 @@ val implementationDependencies = Seq(
   logbackDependency
 )
 
-val baseSettings = Seq(
+lazy val baseSettings = Seq(
   scalaVersion := "2.12.7",
   scalacOptions :=
     Opts.compile.encoding("UTF8")
@@ -88,12 +91,18 @@ val baseSettings = Seq(
   resolvers += "Sonatype OSS Release" at "https://oss.sonatype.org/content/repositories/releases",
   resolvers += "Sonatype Snapshot" at "https://oss.sonatype.org/content/repositories/snapshots",
   credentials += {
-    Seq("build.publish.host", "build.publish.user", "build.publish.password") map sys.props.get match {
-      case Seq(Some(host), Some(user), Some(pass)) ⇒ Credentials("Sonatype Nexus Repository Manager", host, user, pass)
-      case _ ⇒ Credentials(Path.userHome / ".sbt" / ".sonatype_credentials")
+    Seq("SONATYPE_USER", "SONATYPE_PASS") map sys.env.get match {
+      case Seq(Some(user), Some(pass)) ⇒
+        Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", user, pass)
+      case _ ⇒
+        Credentials(Path.userHome / ".sbt" / ".sonatype_credentials")
     }
   },
   useGpg := false,
+  usePgpKeyHex("1037EE8F929780E1"),
+  pgpPublicRing := baseDirectory.value / ".." / "project" / ".gnupg" / "pubring.gpg",
+  pgpSecretRing := baseDirectory.value / ".." / "project" / ".gnupg" / "secring.gpg",
+  pgpPassphrase := sys.env.get("PGP_PASS").map(_.toArray),
   ThisBuild / organization := "com.github.dealermade",
   ThisBuild / organizationName := "Dealermade",
   ThisBuild / organizationHomepage := Some(url("https://github.com/Dealermade")),
