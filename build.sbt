@@ -36,7 +36,7 @@ lazy val mysql = (project in file(mysqlName))
   ).dependsOn(common)
 
 
-val commonVersion = "0.3.0-SNAPSHOT"
+val commonVersion = "0.3.0"
 val specs2Version = "4.3.4"
 
 val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"

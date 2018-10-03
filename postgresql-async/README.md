@@ -2,10 +2,10 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [postgresql-async - an async Netty based PostgreSQL driver written in Scala 2.10 and 2.11](#postgresql-async---an-async-netty-based-postgresql-driver-written-in-scala-210)
-	- [What can it do now?](#what-can-it-do-now)
-	- [What is missing?](#what-is-missing)
-	- [Supported Scala/Java types and their destination types on PostgreSQL](#supported-scalajava-types-and-their-destination-types-on-postgresql)
+- [postgresql-async - an async Netty based PostgreSQL driver written in Scala 2.12](#postgresql-async---an-async-netty-based-postgresql-driver-written-in-scala-212)
+  - [What can it do now?](#what-can-it-do-now)
+  - [What is missing?](#what-is-missing)
+  - [Supported Scala/Java types and their destination types on PostgreSQL](#supported-scalajava-types-and-their-destination-types-on-postgresql)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

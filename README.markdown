@@ -1,3 +1,29 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [postgresql-async & mysql-async *](#postgresql-async--mysql-async-)
+    - [Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12](#async-netty-based-database-drivers-for-mysql-and-postgresql-written-in-scala-212)
+  - [Abstractions and integrations](#abstractions-and-integrations)
+  - [Include them as dependencies](#include-them-as-dependencies)
+  - [Database connections and encodings](#database-connections-and-encodings)
+  - [Prepared statements gotcha](#prepared-statements-gotcha)
+  - [What are the design goals?](#what-are-the-design-goals)
+  - [What is missing?](#what-is-missing)
+  - [How can you help?](#how-can-you-help)
+  - [Main public interface](#main-public-interface)
+    - [Connection](#connection)
+    - [QueryResult](#queryresult)
+    - [ResultSet](#resultset)
+    - [Prepared statements](#prepared-statements)
+  - [Transactions](#transactions)
+  - [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
+  - [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
+  - [Contributing](#contributing)
+  - [Licence](#licence)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # postgresql-async & mysql-async [![Build Status](https://travis-ci.org/Dealermade/postgresql-async.svg?branch=master)](https://travis-ci.org/Dealermade/postgresql-async)
 ### Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12
 
