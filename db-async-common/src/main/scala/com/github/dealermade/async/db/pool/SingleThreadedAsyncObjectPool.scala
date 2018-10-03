@@ -133,6 +133,7 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T], configuration:
             this.mainPool.shutdown
             this.closed = true
             (this.poolables.map(i => i.item) ++ this.checkouts).foreach(item => factory.destroy(item))
+            this.waitQueue.foreach(_.failure(new IllegalStateException("Pool closed")))
             promise.success(this)
           } catch {
             case e: Exception => promise.failure(e)

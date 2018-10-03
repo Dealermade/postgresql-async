@@ -1,22 +1,16 @@
 package com.github.dealermade.async.db.pool
 
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
-import org.specs2.mutable.Specification
-
-import scala.util.Try
-import scala.concurrent.Await
-import scala.concurrent.duration._
-import scala.concurrent.Future
-import org.specs2.mutable.SpecificationWithJUnit
-
-import language.reflectiveCalls
 import com.github.dealermade.async.db.util.{CallingThreadExecutionContext, ExecutorServiceWrapper, Worker}
-
-import scala.concurrent.ExecutionContext
-import java.util.concurrent.Executors
-
+import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
+
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.duration._
+import scala.language.reflectiveCalls
+import scala.util.Try
 
 class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
   isolated
@@ -24,6 +18,7 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
 
   val config =
     PoolConfiguration(100, Long.MaxValue, 100, Int.MaxValue)
+
   trait Context extends Scope {
     private var current = new AtomicInteger
     val factory = new ObjectFactory[Int] {
@@ -36,7 +31,9 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         else {
           current.incrementAndGet()
         }
+
       def destroy(item: Int) = {}
+
       def validate(item: Int) =
         Try {
           if (reject.contains(item))
@@ -47,6 +44,7 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
 
     val pool = new PartitionedAsyncObjectPool(factory, config, 2) {
       override protected def createWorker(): Worker = Worker(new ExecutorServiceWrapper()(new CallingThreadExecutionContext()))
+
       override protected def currentPool: SingleThreadedAsyncObjectPool[Int] = pools(0)
     }
 
@@ -55,15 +53,28 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         await(pool.take)
 
     def maxObjects = config.maxObjects / 2
+
     def maxIdle = config.maxIdle / 2
+
     def maxQueueSize = config.maxQueueSize / 2
+  }
+
+  def withContext(block: Context => Unit): Context = {
+    val context = new Context() {}
+    try {
+      block(context)
+    } finally {
+      await(context.pool.close)
+    }
+    context
   }
 
   "pool contents" >> {
 
     "before exceed maxObjects" >> {
 
-      "take one element" in new Context {
+      "take one element" in withContext { ctx =>
+        import ctx._
         takeAndWait(1)
 
         pool.inUse.size mustEqual 1
@@ -71,7 +82,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         pool.availables.size mustEqual 0
       }
 
-      "take one element and return it invalid" in new Context {
+      "take one element and return it invalid" in withContext { ctx =>
+        import ctx._
         takeAndWait(1)
         factory.reject += 1
 
@@ -82,7 +94,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         pool.availables.size mustEqual 0
       }
 
-      "take one failed element" in new Context {
+      "take one failed element" in withContext { ctx =>
+        import ctx._
         factory.failCreate = true
         takeAndWait(1) must throwA[IllegalStateException]
 
@@ -91,7 +104,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         pool.availables.size mustEqual 0
       }
 
-      "take maxObjects" in new Context {
+      "take maxObjects" in withContext { ctx =>
+        import ctx._
         takeAndWait(maxObjects)
 
         pool.inUse.size mustEqual maxObjects
@@ -99,7 +113,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         pool.availables.size mustEqual 0
       }
 
-      "take maxObjects - 1 and take one failed" in new Context {
+      "take maxObjects - 1 and take one failed" in withContext { ctx =>
+        import ctx._
         takeAndWait(maxObjects - 1)
 
         factory.failCreate = true
@@ -110,7 +125,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         pool.availables.size mustEqual 0
       }
 
-      "take maxObjects and receive one back" in new Context {
+      "take maxObjects and receive one back" in withContext { ctx =>
+        import ctx._
         takeAndWait(maxObjects)
         await(pool.giveBack(1))
 
@@ -119,7 +135,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         pool.availables.size mustEqual 1
       }
 
-      "take maxObjects and receive one invalid back" in new Context {
+      "take maxObjects and receive one invalid back" in withContext { ctx =>
+        import ctx._
         takeAndWait(maxObjects)
         factory.reject += 1
         await(pool.giveBack(1)) must throwA[IllegalStateException]
@@ -134,7 +151,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
 
       "before exceed maxQueueSize" >> {
 
-        "one take queued" in new Context {
+        "one take queued" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           pool.take
 
@@ -143,7 +161,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "one take queued and receive one item back" in new Context {
+        "one take queued and receive one item back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           val taking = pool.take
 
@@ -155,9 +174,9 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "one take queued and receive one invalid item back" in new Context {
+        "one take queued and receive one invalid item back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
-          // TODO 'taking' future is never completed
           val taking = pool.take
           factory.reject += 1
           await(pool.giveBack(1)) must throwA[IllegalStateException]
@@ -167,7 +186,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "maxQueueSize takes queued" in new Context {
+        "maxQueueSize takes queued" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -178,7 +198,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "maxQueueSize takes queued and receive one back" in new Context {
+        "maxQueueSize takes queued and receive one back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           val taking = pool.take
           for (_ <- 0 until maxQueueSize - 1)
@@ -192,7 +213,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "maxQueueSize takes queued and receive one invalid back" in new Context {
+        "maxQueueSize takes queued and receive one invalid back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -208,7 +230,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
 
       "after exceed maxQueueSize" >> {
 
-        "start to reject takes" in new Context {
+        "start to reject takes" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -220,7 +243,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "receive an object back" in new Context {
+        "receive an object back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -232,7 +256,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "receive an invalid object back" in new Context {
+        "receive an invalid object back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -245,7 +270,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "receive maxQueueSize objects back" in new Context {
+        "receive maxQueueSize objects back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -259,7 +285,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "receive maxQueueSize invalid objects back" in new Context {
+        "receive maxQueueSize invalid objects back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -275,7 +302,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 0
         }
 
-        "receive maxQueueSize + 1 object back" in new Context {
+        "receive maxQueueSize + 1 object back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -289,7 +317,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
           pool.availables.size mustEqual 1
         }
 
-        "receive maxQueueSize + 1 invalid object back" in new Context {
+        "receive maxQueueSize + 1 invalid object back" in withContext { ctx =>
+          import ctx._
           takeAndWait(maxObjects)
           for (_ <- 0 until maxQueueSize)
             pool.take
@@ -307,7 +336,8 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
     }
   }
 
-  "gives back the connection to the original pool" in new Context {
+  "gives back the connection to the original pool" in withContext { ctx =>
+    import ctx._
     val executor = Executors.newFixedThreadPool(20)
     implicit val context = ExecutionContext.fromExecutor(executor)
 

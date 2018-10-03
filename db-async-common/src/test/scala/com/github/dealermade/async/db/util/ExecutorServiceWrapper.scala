@@ -27,15 +27,12 @@ class ExecutorServiceWrapper(implicit ec: ExecutionContext) extends ExecutorServ
 
   def isShutdown: Boolean = false
 
-  def shutdown() {
-    throw new UnsupportedOperationException("ExecutorServiceWrapper.shutdown")
-  }
+  def shutdown() {}
 
   def awaitTermination(timeout: Long, unit: TimeUnit): Boolean =
-    throw new UnsupportedOperationException("ExecutorServiceWrapper.awaitTermination")
+    true
 
-  def shutdownNow(): java.util.List[Runnable] =
-    throw new UnsupportedOperationException("ExecutorServiceWrapper.shutdownNow")
+  def shutdownNow(): java.util.List[Runnable] = java.util.Collections.emptyList()
 
   def submit(task: Runnable): JavaFuture[_] =
     wrapPromiseInJavaFuture(executeWithPromise {
