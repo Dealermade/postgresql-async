@@ -73,7 +73,7 @@ val baseSettings = Seq(
   Test / testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential"),
   doc / scalacOptions := Seq("-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
   javacOptions := Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF8"),
-  organization := "com.github.mauricio",
+  organization := "com.github.dealermade",
   version := commonVersion,
   parallelExecution := false,
   Test / publishArtifact := false,
@@ -90,7 +90,7 @@ val baseSettings = Seq(
     }
   },
   pomExtra := (
-    <url>https://github.com/mauricio/postgresql-async</url>
+    <url>https://github.com/Dealermade/postgresql-async</url>
       <licenses>
         <license>
           <name>APACHE-2.0</name>
@@ -99,14 +99,19 @@ val baseSettings = Seq(
         </license>
       </licenses>
       <scm>
-        <url>git@github.com:mauricio/postgresql-netty.git</url>
-        <connection>scm:git:git@github.com:mauricio/postgresql-netty.git</connection>
+        <url>git@github.com:Dealermade/postgresql-async.git</url>
+        <connection>scm:git:git@github.com:Dealermade/postgresql-async.git</connection>
       </scm>
       <developers>
         <developer>
           <id>mauricio</id>
           <name>Maurício Linhares</name>
           <url>https://github.com/mauricio</url>
+        </developer>
+        <developer>
+          <id>alexbezhan</id>
+          <name>Alex Bezhan</name>
+          <url>https://github.com/alexbezhan</url>
         </developer>
       </developers>
     )
