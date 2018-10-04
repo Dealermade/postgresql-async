@@ -40,5 +40,5 @@ after_script:
   - docker-compose down
 
 after_success:
-  - "[[ $TRAVIS_BRANCH == \"master\" ]] && sbt release"
+  - "[[ $TRAVIS_BRANCH == \"alexbezhan/ch1032/https-github-com-dealermade-postgresql-async\" && ENV['TRAVIS_PULL_REQUEST'] == 'false']] && sbt release"
 
