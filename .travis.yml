@@ -43,7 +43,7 @@ jobs:
         - docker-compose down
       script: "sbt ++$TRAVIS_SCALA_VERSION compile"
     - stage: "publish"
-      if: (branch = master)
+      if: (NOT type IN (pull_request)) AND (branch = master)
       sudo: required
       dist: trusty
       env:
