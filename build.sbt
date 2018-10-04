@@ -1,3 +1,5 @@
+addCommandAlias("release", ";sonatypeOpen \"com.github.dealermade\" \"staging\";publishSigned;sonatypeReleaseAll")
+
 val commonName = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName = "mysql-async"
