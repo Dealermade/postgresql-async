@@ -5,6 +5,7 @@
 - [postgresql-async & mysql-async *](#postgresql-async--mysql-async-)
     - [Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12](#async-netty-based-database-drivers-for-mysql-and-postgresql-written-in-scala-212)
   - [Abstractions and integrations](#abstractions-and-integrations)
+  - [Add Sonatype release repository:](#add-sonatype-release-repository)
   - [Include them as dependencies](#include-them-as-dependencies)
   - [Database connections and encodings](#database-connections-and-encodings)
   - [Prepared statements gotcha](#prepared-statements-gotcha)
@@ -52,12 +53,32 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
  class and a mechanism to create a Table Date Gateway model with very little boiler plate code;
 * [Quill](http://getquill.io) - A compile-time language integrated query library for Scala.
 
+## Add Sonatype release repository:
+```scala
+resolvers += "Sonatype OSS Release" at "https://oss.sonatype.org/content/repositories/releases"
+```
+
+or Maven:
+
+```xml
+<repositories>
+    <repository>
+        <id>oss-sonatype</id>
+        <name>oss-sonatype</name>
+        <url>https://oss.sonatype.org/content/repositories/releases</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
 ## Include them as dependencies
 
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-"com.github.dealermade" %% "postgresql-async" % "0.3.0-SNAPSHOT"
+libraryDependencies += "com.github.dealermade" %% "postgresql-async" % "0.3.1"
 ```
 
 Or Maven:
@@ -66,14 +87,14 @@ Or Maven:
 <dependency>
   <groupId>com.github.dealermade</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 
 And if you're into MySQL:
 
 ```scala
-"com.github.dealermade" %% "mysql-async" % "0.3.0-SNAPSHOT"
+libraryDependencies += "com.github.dealermade" %% "mysql-async" % "0.3.1"
 ```
 
 Or Maven:
@@ -82,7 +103,7 @@ Or Maven:
 <dependency>
   <groupId>com.github.dealermade</groupId>
   <artifactId>mysql-async_2.12</artifactId>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 

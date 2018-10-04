@@ -41,7 +41,7 @@ jobs:
 
       after_script:
         - docker-compose down
-      script: "sbt ++$TRAVIS_SCALA_VERSION compile"
+      script: "sbt ++$TRAVIS_SCALA_VERSION test"
     - stage: "publish"
       if: (NOT type IN (pull_request)) AND (branch = master)
       sudo: required
