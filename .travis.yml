@@ -49,10 +49,10 @@ jobs:
       sudo: required
       dist: trusty
       env:
-      script: "sbt ++$TRAVIS_SCALA_VERSION test"
+      script: "sbt ++$TRAVIS_SCALA_VERSION compile"
     - stage: "publish"
       sudo: required
       dist: trusty
       env:
       script: "sbt release"
-      if: (NOT type IN (pull_request)) AND (branch = master)
+      if: (branch = master)
