@@ -39,8 +39,17 @@ before_script:
 after_script:
   - docker-compose down
 
+stages:
+  - "test"
+  - "publish"
+
 jobs:
   include:
+    - stage: "test"
+      sudo: required
+      dist: trusty
+      env:
+      script: "sbt ++$TRAVIS_SCALA_VERSION test"
     - stage: "publish"
       sudo: required
       dist: trusty
