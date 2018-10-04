@@ -53,26 +53,6 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
  class and a mechanism to create a Table Date Gateway model with very little boiler plate code;
 * [Quill](http://getquill.io) - A compile-time language integrated query library for Scala.
 
-## Add Sonatype release repository:
-```scala
-resolvers += "Sonatype OSS Release" at "https://oss.sonatype.org/content/repositories/releases"
-```
-
-or Maven:
-
-```xml
-<repositories>
-    <repository>
-        <id>oss-sonatype</id>
-        <name>oss-sonatype</name>
-        <url>https://oss.sonatype.org/content/repositories/releases</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-</repositories>
-```
-
 ## Include them as dependencies
 
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
