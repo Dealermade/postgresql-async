@@ -1,0 +1,26 @@
+version: '3'
+services:
+  pgbouncer:
+    image: brainsam/pgbouncer:latest
+    ports:
+      - "6432:6432"
+    links:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - POOL_MODE=transaction
+
+  postgres:
+    build: ./script/postgresql
+    command: postgres -c ssl=on
+    ports:
+      - "5432:5432"
+
+  mysql:
+    build: ./script/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true

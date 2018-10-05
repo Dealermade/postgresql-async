@@ -1,11 +1,5 @@
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.5.0")
+addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "1.5.1")
 
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.1")
 
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.0")
-
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.0")
-
-resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
-
-// pgpSigningKey := Some(0xB98761578C650D77L)
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.0")

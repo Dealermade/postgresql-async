@@ -1,28 +1,32 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [[![Build Status](https://travis-ci.org/mauricio/postgresql-async.png)](https://travis-ci.org/mauricio/postgresql-async) postgresql-async & mysql-async - async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.10, 2.11 and 2.12](#!build-statushttpstravis-ciorgmauriciopostgresql-asyncpnghttpstravis-ciorgmauriciopostgresql-async-postgresql-async-&-mysql-async---async-netty-based-database-drivers-for-mysql-and-postgresql-written-in-scala-210-and-211)
-	- [Abstractions and integrations](#abstractions-and-integrations)
-	- [Include them as dependencies](#include-them-as-dependencies)
-	- [Database connections and encodings](#database-connections-and-encodings)
-	- [Prepared statements gotcha](#prepared-statements-gotcha)
-	- [What are the design goals?](#what-are-the-design-goals)
-	- [What is missing?](#what-is-missing)
-	- [How can you help?](#how-can-you-help)
-	- [Main public interface](#main-public-interface)
-		- [Connection](#connection)
-		- [QueryResult](#queryresult)
-		- [ResultSet](#resultset)
-		- [Prepared statements](#prepared-statements)
-	- [Transactions](#transactions)
-	- [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
-	- [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
-	- [Contributing](#contributing)
-	- [Licence](#licence)
+- [postgresql-async & mysql-async *](#postgresql-async--mysql-async-)
+    - [Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12](#async-netty-based-database-drivers-for-mysql-and-postgresql-written-in-scala-212)
+  - [Abstractions and integrations](#abstractions-and-integrations)
+  - [Add Sonatype release repository:](#add-sonatype-release-repository)
+  - [Include them as dependencies](#include-them-as-dependencies)
+  - [Database connections and encodings](#database-connections-and-encodings)
+  - [Prepared statements gotcha](#prepared-statements-gotcha)
+  - [What are the design goals?](#what-are-the-design-goals)
+  - [What is missing?](#what-is-missing)
+  - [How can you help?](#how-can-you-help)
+  - [Main public interface](#main-public-interface)
+    - [Connection](#connection)
+    - [QueryResult](#queryresult)
+    - [ResultSet](#resultset)
+    - [Prepared statements](#prepared-statements)
+  - [Transactions](#transactions)
+  - [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
+  - [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
+  - [Contributing](#contributing)
+  - [Licence](#licence)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# [![Build Status](https://travis-ci.org/mauricio/postgresql-async.png)](https://travis-ci.org/mauricio/postgresql-async) postgresql-async & mysql-async - async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.10, 2.11 and 2.12
+# postgresql-async & mysql-async [![Build Status](https://travis-ci.org/Dealermade/postgresql-async.svg?branch=master)](https://travis-ci.org/Dealermade/postgresql-async)
+### Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12
 
 The main goal for this project is to implement simple, async, performant and reliable database drivers for
 PostgreSQL and MySQL in Scala. This is not supposed to be a JDBC replacement, these drivers aim to cover the common
@@ -54,49 +58,32 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-"com.github.mauricio" %% "postgresql-async" % "0.2.21"
+libraryDependencies += "com.github.dealermade" %% "postgresql-async" % "0.3.1"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.mauricio</groupId>
-  <artifactId>postgresql-async_2.11</artifactId>
-  <version>0.2.21</version>
-</dependency>
-```
-
-respectively for Scala 2.12:
-```xml
-<dependency>
-  <groupId>com.github.mauricio</groupId>
+  <groupId>com.github.dealermade</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
-  <version>0.2.21</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 
 And if you're into MySQL:
 
 ```scala
-"com.github.mauricio" %% "mysql-async" % "0.2.21"
+libraryDependencies += "com.github.dealermade" %% "mysql-async" % "0.3.1"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.mauricio</groupId>
-  <artifactId>mysql-async_2.11</artifactId>
-  <version>0.2.21</version>
-</dependency>
-```
-respectively for Scala 2.12:
-```xml
-<dependency>
-  <groupId>com.github.mauricio</groupId>
+  <groupId>com.github.dealermade</groupId>
   <artifactId>mysql-async_2.12</artifactId>
-  <version>0.2.21</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 
@@ -159,7 +146,7 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 - checkout the source code
 - find bugs, find places where performance can be improved
 - check the **What is missing** piece
-- check the [issues page](https://github.com/mauricio/postgresql-async/issues) for bugs or new features
+- check the [issues page](https://github.com/dealermade/postgresql-async/issues) for bugs or new features
 - send a pull request with specs
 
 ## Main public interface
@@ -169,7 +156,7 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 Represents a connection to the database. This is the **root** object you will be using in your application. You will
 find three classes that implement this trait, `PostgreSQLConnection`, `MySQLConnection` and `ConnectionPool`.
 The difference between them is that `ConnectionPool` is, as the name implies, a pool of connections and you
-need to give it an connection factory so it can create connections and manage them.
+need to give it a connection factory so it can create connections and manage them.
 
 To create both you will need a `Configuration` object with your database details. You can create one manually or
 create one from a JDBC or Heroku database URL using the `URLParser` object.
@@ -203,12 +190,12 @@ The `?` (question mark) in the query is a parameter placeholder, it allows you t
 query without having to escape stuff yourself. The driver itself will make sure this parameter is delivered to the
 database in a safe way so you don't have to worry about SQL injection attacks.
 
-The basic numbers, Joda Time date, time, timestamp objects, strings and arrays of these objects are all valid values
+The basic numbers, JodaTime date, time, timestamp objects, strings and arrays of these objects are all valid values
 as prepared statement parameters and they will be encoded to their respective database types. Remember that not all databases
 are created equal, so not every type will work or might work in unexpected ways. For instance, MySQL doesn't have array
 types, so, if you send an array or collection to MySQL it won't work.
 
-Remember that parameters are positional the order they show up at query should be the same as the one in the array or
+Remember that parameters are positional. The order they show up at query should be the same as the one in the array or
 sequence given to the method call.
 
 ## Transactions
@@ -242,10 +229,10 @@ it [here](http://mauricio.github.io/2013/04/29/async-database-access-with-postgr
 
 In short, what you would usually do is:
 ```scala
-import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
-import com.github.mauricio.async.db.postgresql.util.URLParser
-import com.github.mauricio.async.db.util.ExecutorServiceUtils.CachedExecutionContext
-import com.github.mauricio.async.db.{RowData, QueryResult, Connection}
+import com.github.dealermade.async.db.postgresql.PostgreSQLConnection
+import com.github.dealermade.async.db.postgresql.util.URLParser
+import com.github.dealermade.async.db.util.ExecutorServiceUtils.CachedExecutionContext
+import com.github.dealermade.async.db.{RowData, QueryResult, Connection}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
@@ -309,10 +296,9 @@ bug you want to fix and send a pull request back. If you thing the change is too
 please create an issue **before** you start working on it so we can discuss what you're trying to do.
 
 You should be easily able to build this project in your favorite IDE since it's built by [SBT](http://www.scala-sbt.org/)
-using a plugin that generates your IDE's project files. You can use [sbt-idea](https://github.com/mpeltonen/sbt-idea)
-for IntelliJ Idea and [sbteclipse](https://github.com/typesafehub/sbteclipse) for Eclipse integration.
+importing the project using IntelliJ IDEA or Eclipse.
 
-[Check our list of contributors!](https://github.com/mauricio/postgresql-async/graphs/contributors)
+[Check our list of contributors!](https://github.com/dealermade/postgresql-async/graphs/contributors)
 
 ## Licence
 
