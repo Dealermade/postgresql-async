@@ -28,7 +28,7 @@ object BasicExample {
 
   def main(args: Array[String]) {
 
-    val configuration = URLParser.parse("jdbc:postgresql://localhost:5233/my_database?username=postgres&password=somepassword")
+    val configuration = URLParser.parse("jdbc:postgresql://13.126.45.69:5432/dm_development?user=dealermade&password=example1")
     val connection: Connection = new PostgreSQLConnection(configuration)
 
     Await.result(connection.connect, 5 seconds)
