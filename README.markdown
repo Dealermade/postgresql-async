@@ -2,10 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [postgresql-async & mysql-async *](#postgresql-async--mysql-async-)
-    - [Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12](#async-netty-based-database-drivers-for-mysql-and-postgresql-written-in-scala-212)
+- [postgresql-async *](#postgresql-async-)
+    - [Async, Netty based, database driver for PostgreSQL written in Scala 2.12](#async-netty-based-database-driver-for-postgresql-written-in-scala-212)
   - [Abstractions and integrations](#abstractions-and-integrations)
-  - [Add Sonatype release repository:](#add-sonatype-release-repository)
   - [Include them as dependencies](#include-them-as-dependencies)
   - [Database connections and encodings](#database-connections-and-encodings)
   - [Prepared statements gotcha](#prepared-statements-gotcha)
@@ -18,26 +17,23 @@
     - [ResultSet](#resultset)
     - [Prepared statements](#prepared-statements)
   - [Transactions](#transactions)
-  - [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
+  - [Example usage](#example-usage)
   - [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
   - [Contributing](#contributing)
   - [Licence](#licence)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# postgresql-async & mysql-async [![Build Status](https://travis-ci.org/Dealermade/postgresql-async.svg?branch=master)](https://travis-ci.org/Dealermade/postgresql-async)
-### Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.12
+# postgresql-async [![Build Status](https://travis-ci.org/Dealermade/postgresql-async.svg?branch=master)](https://travis-ci.org/Dealermade/postgresql-async)
+### Async, Netty based, database driver for PostgreSQL written in Scala 2.12
 
-The main goal for this project is to implement simple, async, performant and reliable database drivers for
-PostgreSQL and MySQL in Scala. This is not supposed to be a JDBC replacement, these drivers aim to cover the common
+The main goal for this project is to implement simple, async, performant and reliable database driver for
+PostgreSQL in Scala. This is not supposed to be a JDBC replacement, these drivers aim to cover the common
 process of _send a statement, get a response_ that you usually see in applications out there. So it's unlikely
 there will be support for updating result sets live or stuff like that.
 
 This project always returns [JodaTime](http://joda-time.sourceforge.net/) when dealing with date types and not the
 `java.util.Date` class.
-
-If you want information specific to the drivers, check the [PostgreSQL README](postgresql-async/README.md) and the
-[MySQL README](mysql-async/README.md).
 
 You can view the project's [CHANGELOG here](CHANGELOG.md).
 
@@ -47,7 +43,6 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
  transactional memory (STM) layer;
 * [ScalikeJDBC-Async](https://github.com/scalikejdbc/scalikejdbc-async) - provides an abstraction layer on top of the
  driver allowing you to write less SQL and make use of a nice high level database access API;
-* [mod-mysql-postgresql](https://github.com/vert-x/mod-mysql-postgresql) - [vert.x](http://vertx.io/) module that integrates
  the driver into a vert.x application;
 * [dbmapper](https://github.com/njeuk/dbmapper) - enables SQL queries with automatic mapping from the database table to the Scala 
  class and a mechanism to create a Table Date Gateway model with very little boiler plate code;
@@ -67,22 +62,6 @@ Or Maven:
 <dependency>
   <groupId>com.github.dealermade</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
-  <version>0.3.1</version>
-</dependency>
-```
-
-And if you're into MySQL:
-
-```scala
-libraryDependencies += "com.github.dealermade" %% "mysql-async" % "0.3.1"
-```
-
-Or Maven:
-
-```xml
-<dependency>
-  <groupId>com.github.dealermade</groupId>
-  <artifactId>mysql-async_2.12</artifactId>
   <version>0.3.1</version>
 </dependency>
 ```
@@ -154,7 +133,7 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 ### Connection
 
 Represents a connection to the database. This is the **root** object you will be using in your application. You will
-find three classes that implement this trait, `PostgreSQLConnection`, `MySQLConnection` and `ConnectionPool`.
+find three classes that implement this trait, `PostgreSQLConnection` and `ConnectionPool`.
 The difference between them is that `ConnectionPool` is, as the name implies, a pool of connections and you
 need to give it a connection factory so it can create connections and manage them.
 
@@ -192,8 +171,7 @@ database in a safe way so you don't have to worry about SQL injection attacks.
 
 The basic numbers, JodaTime date, time, timestamp objects, strings and arrays of these objects are all valid values
 as prepared statement parameters and they will be encoded to their respective database types. Remember that not all databases
-are created equal, so not every type will work or might work in unexpected ways. For instance, MySQL doesn't have array
-types, so, if you send an array or collection to MySQL it won't work.
+are created equal, so not every type will work or might work in unexpected ways.
 
 Remember that parameters are positional. The order they show up at query should be the same as the one in the array or
 sequence given to the method call.
@@ -222,7 +200,7 @@ If all futures succeed, the transaction is committed normally, if any of them fa
 database. You should not reuse a database connection that has rolled back a transaction, just close it and create a
 new connection to continue using it.
 
-## Example usage (for PostgreSQL, but it looks almost the same on MySQL)
+## Example usage
 
 You can find a small Play 2 app using it [here](https://github.com/mauricio/postgresql-async-app) and a blog post about
 it [here](http://mauricio.github.io/2013/04/29/async-database-access-with-postgresql-play-scala-and-heroku.html).

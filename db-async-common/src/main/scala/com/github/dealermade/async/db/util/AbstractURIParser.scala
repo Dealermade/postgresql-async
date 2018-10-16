@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory
 import scala.util.matching.Regex
 
 /**
-  * Common parser assisting methods for PG and MySQL URI parsers.
+  * Common parser assisting methods for PG URI parser.
   */
 abstract class AbstractURIParser {
   import AbstractURIParser._

@@ -2,7 +2,6 @@ addCommandAlias("release", ";sonatypeOpen \"com.github.dealermade\" \"staging\";
 
 val commonName = "db-async-common"
 val postgresqlName = "postgresql-async"
-val mysqlName = "mysql-async"
 
 lazy val root = (project in file("."))
   .withId("db-async")
@@ -12,7 +11,7 @@ lazy val root = (project in file("."))
     publishLocal := Unit,
     publishArtifact := false
   )
-  .aggregate(common, postgresql, mysql)
+  .aggregate(common, postgresql)
 
 lazy val common = (project in file(commonName))
   .withId(commonName)
@@ -30,16 +29,7 @@ lazy val postgresql = (project in file(postgresqlName))
     libraryDependencies ++= implementationDependencies
   ).dependsOn(common)
 
-lazy val mysql = (project in file(mysqlName))
-  .withId(mysqlName)
-  .settings(
-    baseSettings,
-    name := mysqlName,
-    libraryDependencies ++= implementationDependencies
-  ).dependsOn(common)
-
-
-val commonVersion = "0.3.1"
+val commonVersion = "0.3.2"
 val specs2Version = "4.3.4"
 
 val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
@@ -51,7 +41,7 @@ val commonDependencies = Seq(
   "org.slf4j" % "slf4j-api" % "1.7.25",
   "joda-time" % "joda-time" % "2.10",
   "org.joda" % "joda-convert" % "2.1.1",
-  "io.netty" % "netty-all" % "4.1.29.Final",
+  "io.netty" % "netty-all" % "4.0.47.Final",
   "org.javassist" % "javassist" % "3.23.1-GA",
   specs2Dependency,
   specs2JunitDependency,
@@ -119,7 +109,7 @@ lazy val baseSettings = Seq(
       url = url("https://github.com/alexbezhan")
     )
   ),
-  ThisBuild / description := "Async, Netty based, database drivers for MySQL and PostgreSQL written in Scala",
+  ThisBuild / description := "Async, Netty based, database driver for PostgreSQL written in Scala",
   ThisBuild / licenses := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   ThisBuild / homepage := Some(url("https://github.com/example/project")),
   // Remove all additional repository other than Maven Central from POM
