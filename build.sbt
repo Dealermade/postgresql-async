@@ -1,5 +1,3 @@
-addCommandAlias("release", ";sonatypeOpen \"com.github.dealermade\" \"staging\";publishSigned;sonatypeRelease")
-
 val commonName = "db-async-common"
 val postgresqlName = "postgresql-async"
 
@@ -74,7 +72,7 @@ lazy val baseSettings = Seq(
   publishTo := {
     version.value.endsWith("SNAPSHOT") match {
       case true => Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
-      case false => Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+      case false => Some("releases" at "https://oss.sonatype.org/content/repositories/releases")
     }
   },
   resolvers += "Sonatype OSS Release" at "https://oss.sonatype.org/content/repositories/releases",
