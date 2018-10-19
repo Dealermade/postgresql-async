@@ -17,7 +17,7 @@
 package com.github.dealermade.async.db.pool
 
 object PoolConfiguration {
-  val Default = new PoolConfiguration(10, 4, 10)
+  val Default = new PoolConfiguration(30, 10, 100000)
 }
 
 /**
