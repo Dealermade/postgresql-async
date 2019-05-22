@@ -21,3 +21,4 @@ db-async-common/target/*
 .vagrant/*
 vendor/*
 .DS_Store
+.hydra

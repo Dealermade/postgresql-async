@@ -25,9 +25,10 @@ lazy val postgresql = (project in file(postgresqlName))
     baseSettings,
     name := postgresqlName,
     libraryDependencies ++= implementationDependencies
-  ).dependsOn(common)
+  )
+  .dependsOn(common)
 
-val commonVersion = "0.3.3"
+val commonVersion = "0.3.7"
 val specs2Version = "4.3.4"
 
 val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
@@ -59,22 +60,23 @@ lazy val baseSettings = Seq(
       :+ Opts.compile.deprecation
       :+ Opts.compile.unchecked
       :+ "-feature"
-      :+ "-language:postfixOps"
-  ,
+      :+ "-language:postfixOps",
   Test / testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential"),
-  doc / scalacOptions := Seq("-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
+  doc / scalacOptions := Seq(
+    "-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
   javacOptions := Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF8"),
   version := commonVersion,
   parallelExecution := false,
   Test / publishArtifact := false,
   Test / fork := true,
   Test / baseDirectory := file("."),
-  publishTo := {
-    version.value.endsWith("SNAPSHOT") match {
-      case true => Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
-      case false => Some("releases" at "https://oss.sonatype.org/content/repositories/releases")
-    }
-  },
+  sonatypeProfileName := "com.github.dealermade",
+  publishTo := Some(
+    if (isSnapshot.value)
+      Opts.resolver.sonatypeSnapshots
+    else
+      Opts.resolver.sonatypeStaging
+  ),
   resolvers += "Sonatype OSS Release" at "https://oss.sonatype.org/content/repositories/releases",
   resolvers += "Sonatype Snapshot" at "https://oss.sonatype.org/content/repositories/snapshots",
   credentials += {
@@ -111,6 +113,8 @@ lazy val baseSettings = Seq(
   ThisBuild / licenses := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   ThisBuild / homepage := Some(url("https://github.com/example/project")),
   // Remove all additional repository other than Maven Central from POM
-  ThisBuild / pomIncludeRepository := { _ => false },
+  ThisBuild / pomIncludeRepository := { _ =>
+    false
+  },
   ThisBuild / publishMavenStyle := true
 )
