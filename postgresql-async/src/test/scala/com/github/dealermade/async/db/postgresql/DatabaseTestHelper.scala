@@ -102,7 +102,7 @@ trait DatabaseTestHelper {
   }
 
   def await[T](future: Future[T]): T = {
-    Await.result(future, 5 seconds)
+    Await.result(future, 15 seconds)
   }
 
 }
