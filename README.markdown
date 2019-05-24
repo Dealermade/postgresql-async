@@ -53,7 +53,7 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-libraryDependencies += "com.github.dealermade" %% "postgresql-async" % "0.3.8"
+libraryDependencies += "com.github.dealermade" %% "postgresql-async" % "0.3.9"
 ```
 
 Or Maven:
@@ -62,7 +62,7 @@ Or Maven:
 <dependency>
   <groupId>com.github.dealermade</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
-  <version>0.3.8</version>
+  <version>0.3.9</version>
 </dependency>
 ```
 
