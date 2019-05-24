@@ -28,7 +28,7 @@ lazy val postgresql = (project in file(postgresqlName))
   )
   .dependsOn(common)
 
-val commonVersion = "0.3.7"
+val commonVersion = "0.3.8"
 val specs2Version = "4.3.4"
 
 val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
@@ -54,7 +54,7 @@ val implementationDependencies = Seq(
 )
 
 lazy val baseSettings = Seq(
-  scalaVersion := "2.12.7",
+  scalaVersion := "2.12.8",
   scalacOptions :=
     Opts.compile.encoding("UTF8")
       :+ Opts.compile.deprecation
