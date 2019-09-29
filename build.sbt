@@ -28,7 +28,7 @@ lazy val postgresql = (project in file(postgresqlName))
   )
   .dependsOn(common)
 
-val commonVersion = "0.3.9"
+val commonVersion = "0.3.10"
 val specs2Version = "4.5.1"
 
 val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
@@ -41,6 +41,7 @@ val commonDependencies = Seq(
   "joda-time" % "joda-time" % "2.10.2",
   "org.joda" % "joda-convert" % "2.2.1",
   "io.netty" % "netty-all" % "4.1.36.Final",
+  "dev.zio" %% "zio" % "1.0.0-RC13",
   "org.javassist" % "javassist" % "3.25.0-GA",
   specs2Dependency,
   specs2JunitDependency,
@@ -54,7 +55,7 @@ val implementationDependencies = Seq(
 )
 
 lazy val baseSettings = Seq(
-  scalaVersion := "2.12.8",
+  scalaVersion := "2.12.9",
   scalacOptions :=
     Opts.compile.encoding("UTF8")
       :+ Opts.compile.deprecation
@@ -64,7 +65,7 @@ lazy val baseSettings = Seq(
   Test / testOptions += Tests.Argument(TestFrameworks.Specs2, "sequential"),
   doc / scalacOptions := Seq(
     "-doc-external-doc:scala=http://www.scala-lang.org/archives/downloads/distrib/files/nightly/docs/library/"),
-  javacOptions := Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF8"),
+  javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
   version := commonVersion,
   parallelExecution := false,
   Test / publishArtifact := false,

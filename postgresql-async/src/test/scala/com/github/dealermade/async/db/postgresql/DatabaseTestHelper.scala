@@ -22,7 +22,7 @@ import java.util.concurrent.TimeoutException
 import com.github.dealermade.async.db.{Configuration, Connection, QueryResult, SSLConfiguration}
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Task}
 
 trait DatabaseTestHelper {
 
@@ -101,7 +101,7 @@ trait DatabaseTestHelper {
     }
   }
 
-  def await[T](future: Future[T]): T = {
+  def await[T](future: Task[T]): T = {
     Await.result(future, 15 seconds)
   }
 

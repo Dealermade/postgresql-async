@@ -21,7 +21,7 @@ import com.github.dealermade.async.db.postgresql.util.URLParser
 import com.github.dealermade.async.db.util.ExecutorServiceUtils.CachedExecutionContext
 import com.github.dealermade.async.db.{RowData, QueryResult, Connection}
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Task}
 import scala.language.postfixOps
 
 object BasicExample {
@@ -33,9 +33,9 @@ object BasicExample {
 
     Await.result(connection.connect, 5 seconds)
 
-    val future: Future[QueryResult] = connection.sendQuery("SELECT 0")
+    val future: Task[QueryResult] = connection.sendQuery("SELECT 0")
 
-    val mapResult: Future[Any] = future.map(queryResult =>
+    val mapResult: Task[Any] = future.map(queryResult =>
       queryResult.rows match {
         case Some(resultSet) => {
           val row: RowData = resultSet.head

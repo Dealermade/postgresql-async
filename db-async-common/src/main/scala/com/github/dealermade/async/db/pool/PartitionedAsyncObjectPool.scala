@@ -1,10 +1,12 @@
 package com.github.dealermade.async.db.pool
 
-import scala.concurrent.Future
+
 import com.github.dealermade.async.db.util.{ExecutorServiceUtils, Worker}
 
 import scala.concurrent.Promise
 import java.util.concurrent.ConcurrentHashMap
+
+import zio.Task
 
 import scala.util.Success
 import scala.util.Failure
@@ -24,7 +26,7 @@ class PartitionedAsyncObjectPool[T](factory: ObjectFactory[T],
 
   private val checkouts = new ConcurrentHashMap[T, SingleThreadedAsyncObjectPool[T]]
 
-  def take: Future[T] = {
+  def take: Task[T] = {
     val pool = currentPool
     pool.take.andThen {
       case Success(conn) =>
@@ -45,7 +47,7 @@ class PartitionedAsyncObjectPool[T](factory: ObjectFactory[T],
       }
 
   def close =
-    Future.sequence(pools.values.map(_.close)).map { _ =>
+    Task.sequence(pools.values.map(_.close)).map { _ =>
       this
     }
 

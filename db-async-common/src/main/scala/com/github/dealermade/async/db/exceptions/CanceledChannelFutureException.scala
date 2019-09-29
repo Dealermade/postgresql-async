@@ -16,7 +16,7 @@
 
 package com.github.dealermade.async.db.exceptions
 
-import io.netty.channel.ChannelFuture
+import io.netty.channel.ChannelTask
 
-class CanceledChannelFutureException(val channelFuture: ChannelFuture)
-    extends IllegalStateException("This channel future was canceled -> %s".format(channelFuture))
+class CanceledChannelTaskException(val channelTask: ChannelTask)
+    extends IllegalStateException("This channel future was canceled -> %s".format(channelTask))

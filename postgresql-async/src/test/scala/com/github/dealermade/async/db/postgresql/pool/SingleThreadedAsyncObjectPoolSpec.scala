@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 
 import org.specs2.mutable.Specification
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Task}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import com.github.dealermade.async.db.exceptions.ConnectionStillRunningQueryException
@@ -52,7 +52,7 @@ class SingleThreadedAsyncObjectPoolSpec extends Specification with DatabaseTestH
       withPool(
         { pool =>
           val connection = get(pool)
-          val promises: List[Future[PostgreSQLConnection]] = List(pool.take, pool.take, pool.take)
+          val promises: List[Task[PostgreSQLConnection]] = List(pool.take, pool.take, pool.take)
 
           pool.availables.size === 0
           pool.inUse.size === 1
@@ -73,7 +73,7 @@ class SingleThreadedAsyncObjectPoolSpec extends Specification with DatabaseTestH
 
           pool.giveBack(connection)
 
-          val pools: List[Future[AsyncObjectPool[PostgreSQLConnection]]] = promises.map { promise =>
+          val pools: List[Task[AsyncObjectPool[PostgreSQLConnection]]] = promises.map { promise =>
             val connection = Await.result(promise, Duration(5, TimeUnit.SECONDS))
             executeTest(connection)
             pool.giveBack(connection)

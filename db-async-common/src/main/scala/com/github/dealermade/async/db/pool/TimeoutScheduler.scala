@@ -1,7 +1,7 @@
 package com.github.dealermade.async.db.pool
 
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.{TimeUnit, TimeoutException, ScheduledFuture}
+import java.util.concurrent.{TimeUnit, TimeoutException, ScheduledTask}
 import io.netty.channel.EventLoopGroup
 import scala.concurrent.{ExecutionContext, Promise}
 import scala.concurrent.duration.Duration
@@ -34,9 +34,9 @@ trait TimeoutScheduler {
     isTimeoutedBool.get
 
   def addTimeout[A](promise: Promise[A], durationOption: Option[Duration])(
-      implicit executionContext: ExecutionContext): Option[ScheduledFuture[_]] = {
+      implicit executionContext: ExecutionContext): Option[ScheduledTask[_]] = {
     durationOption.map { duration =>
-      val scheduledFuture = schedule(
+      val scheduledTask = schedule(
         {
           if (promise
                 .tryFailure(new TimeoutException(s"Operation is timeouted after it took too long to return (${duration})"))) {
@@ -46,13 +46,13 @@ trait TimeoutScheduler {
         },
         duration
       )
-      promise.future.onComplete(x => scheduledFuture.cancel(false))
+      promise.future.onComplete(x => scheduledTask.cancel(false))
 
-      scheduledFuture
+      scheduledTask
     }
   }
 
-  def schedule(block: => Unit, duration: Duration): ScheduledFuture[_] =
+  def schedule(block: => Unit, duration: Duration): ScheduledTask[_] =
     eventLoopGroup.schedule(new Runnable {
       override def run(): Unit = block
     }, duration.toMillis, TimeUnit.MILLISECONDS)

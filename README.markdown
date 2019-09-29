@@ -193,7 +193,7 @@ Here's an example of how transactions work:
 
 The `inTransaction` method allows you to execute a collection of statements in a single transactions, just use the
 connection object you will receive in your block and send your statements to it. Given each statement causes a new
-future to be returned, you need to `flatMap` the calls to be able to get a `Future[T]` instead of `Future[Future[...]]`
+future to be returned, you need to `flatMap` the calls to be able to get a `Task[T]` instead of `Task[Task[...]]`
  back.
 
 If all futures succeed, the transaction is committed normally, if any of them fail, a `rollback` is issued to the
@@ -212,7 +212,7 @@ import com.github.dealermade.async.db.postgresql.util.URLParser
 import com.github.dealermade.async.db.util.ExecutorServiceUtils.CachedExecutionContext
 import com.github.dealermade.async.db.{RowData, QueryResult, Connection}
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Task}
 
 object BasicExample {
 
@@ -223,9 +223,9 @@ object BasicExample {
 
     Await.result(connection.connect, 5 seconds)
 
-    val future: Future[QueryResult] = connection.sendQuery("SELECT 0")
+    val future: Task[QueryResult] = connection.sendQuery("SELECT 0")
 
-    val mapResult: Future[Any] = future.map(queryResult => queryResult.rows match {
+    val mapResult: Task[Any] = future.map(queryResult => queryResult.rows match {
       case Some(resultSet) => {
         val row : RowData = resultSet.head
         row(0)

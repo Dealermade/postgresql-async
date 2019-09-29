@@ -28,7 +28,7 @@ import org.joda.time.LocalDateTime
 import org.specs2.mutable.Specification
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.Task
 
 object PostgreSQLConnectionSpec {
   val log = Log.get[PostgreSQLConnectionSpec]
@@ -258,7 +258,7 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
     "transaction and flatmap example" in {
 
       val handler: Connection = new PostgreSQLConnection(defaultConfiguration)
-      val result: Future[QueryResult] = handler.connect
+      val result: Task[QueryResult] = handler.connect
         .map(_ => handler)
         .flatMap(connection => connection.sendQuery("BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ"))
         .flatMap(_ => handler.sendQuery("SELECT 0"))

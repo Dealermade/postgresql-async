@@ -7,7 +7,7 @@ import org.specs2.mutable.Specification
 import org.specs2.specification.Scope
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.Task
 
 class ConcurrentConnectionPoolSpec extends Specification with DatabaseTestHelper {
 
@@ -19,24 +19,24 @@ class ConcurrentConnectionPoolSpec extends Specification with DatabaseTestHelper
   "connection pool" should {
     "execute simple queries in parallel" in new Context {
       val queries = for (i <- 0 until poolConfig.maxObjects) yield {
-        Future(i -> pool.sendQuery(s"SELECT $i"))
+        Task(i -> pool.sendQuery(s"SELECT $i"))
       }
 
       assertResultsMatchIndexes(queries)
     }
     "execute queued queries in parallel" in new Context {
       val queries = for (i <- 0 until poolConfig.maxObjects + poolConfig.maxQueueSize) yield {
-        Future(i -> pool.sendQuery(s"SELECT $i"))
+        Task(i -> pool.sendQuery(s"SELECT $i"))
       }
 
       assertResultsMatchIndexes(queries)
     }
   }
 
-  private def assertResultsMatchIndexes(queries: Seq[Future[(Int, Future[QueryResult])]]): Unit = {
-    await(Future.sequence(queries)).foreach {
-      case (i, resultFuture) =>
-        val rows = await(resultFuture).rows
+  private def assertResultsMatchIndexes(queries: Seq[Task[(Int, Task[QueryResult])]]): Unit = {
+    await(Task.sequence(queries)).foreach {
+      case (i, resultTask) =>
+        val rows = await(resultTask).rows
         rows.map(x => x.apply(0)(0)) === Some(i)
     }
   }

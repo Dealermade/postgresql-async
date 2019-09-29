@@ -16,7 +16,9 @@
 
 package com.github.dealermade.async.db.pool
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import zio.Task
+
+import scala.concurrent.{ExecutionContext, Promise}
 
 /**
   *
@@ -31,32 +33,32 @@ trait AsyncObjectPool[T] {
   /**
     *
     * Returns an object from the pool to the callee with the returned future. If the pool can not create or enqueue
-    * requests it will fill the returned [[scala.concurrent.Future]] with an
+    * requests it will fill the returned [[scala.concurrent.Task]] with an
     * [[com.github.dealermade.async.db.pool.PoolExhaustedException]].
     *
     * @return future that will eventually return a usable pool object.
     */
-  def take: Future[T]
+  def take: Task[T]
 
   /**
     *
     * Returns an object taken from the pool back to it. This object will become available for another client to use.
-    * If the object is invalid or can not be reused for some reason the [[scala.concurrent.Future]] returned will contain
+    * If the object is invalid or can not be reused for some reason the [[scala.concurrent.Task]] returned will contain
     * the error that prevented this object of being added back to the pool. The object is then discarded from the pool.
     *
     * @param item
     * @return
     */
-  def giveBack(item: T): Future[AsyncObjectPool[T]]
+  def giveBack(item: T): Task[AsyncObjectPool[T]]
 
   /**
     *
-    * Closes this pool and future calls to **take** will cause the [[scala.concurrent.Future]] to raise an
+    * Closes this pool and future calls to **take** will cause the [[scala.concurrent.Task]] to raise an
     * [[com.github.dealermade.async.db.pool.PoolAlreadyTerminatedException]].
     *
     * @return
     */
-  def close: Future[AsyncObjectPool[T]]
+  def close: Task[AsyncObjectPool[T]]
 
   /**
     *
@@ -65,7 +67,7 @@ trait AsyncObjectPool[T] {
     * @param f function that uses the object
     * @return f wrapped with take and giveBack
     */
-  def use[A](f: (T) => Future[A])(implicit executionContext: ExecutionContext): Future[A] =
+  def use[A](f: (T) => Task[A])(implicit executionContext: ExecutionContext): Task[A] =
     take.flatMap { item =>
       val p = Promise[A]()
       try {
@@ -84,7 +86,7 @@ trait AsyncObjectPool[T] {
           }
       }
 
-      p.future
+      p
     }
 
 }

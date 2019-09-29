@@ -7,7 +7,7 @@ import com.github.dealermade.async.db.util.{CallingThreadExecutionContext, Execu
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Task}
 import scala.concurrent.duration._
 import scala.language.reflectiveCalls
 import scala.util.Try
@@ -343,11 +343,11 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
 
     val takes =
       for (_ <- 0 until 30) yield {
-        Future().flatMap(_ => pool.take)
+        Task().flatMap(_ => pool.take)
       }
     val takesAndReturns =
-      Future.sequence(takes).flatMap { items =>
-        Future.sequence(items.map(pool.giveBack))
+      Task.sequence(takes).flatMap { items =>
+        Task.sequence(items.map(pool.giveBack))
       }
 
     await(takesAndReturns)
@@ -358,6 +358,6 @@ class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
     pool.availables.size mustEqual 30
   }
 
-  private def await[T](future: Future[T]) =
+  private def await[T](future: Task[T]) =
     Await.result(future, Duration.Inf)
 }

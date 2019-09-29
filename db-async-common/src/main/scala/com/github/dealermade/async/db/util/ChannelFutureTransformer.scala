@@ -16,23 +16,26 @@
 
 package com.github.dealermade.async.db.util
 
-import io.netty.channel.{ChannelFutureListener, ChannelFuture}
-import scala.concurrent.{Promise, Future}
-import com.github.dealermade.async.db.exceptions.CanceledChannelFutureException
+import io.netty.channel.{ChannelTask, ChannelTaskListener}
+
+import scala.concurrent.Promise
+import com.github.dealermade.async.db.exceptions.CanceledChannelTaskException
+import zio.Task
+
 import scala.language.implicitConversions
 
-object ChannelFutureTransformer {
+object ChannelTaskTransformer {
 
-  implicit def toFuture(channelFuture: ChannelFuture): Future[ChannelFuture] = {
-    val promise = Promise[ChannelFuture]
+  implicit def toTask(channelTask: ChannelTask): Task[ChannelTask] = {
+    val promise = Promise[ChannelTask]
 
-    channelFuture.addListener(new ChannelFutureListener {
-      def operationComplete(future: ChannelFuture) {
+    channelTask.addListener(new ChannelTaskListener {
+      def operationComplete(future: ChannelTask) {
         if (future.isSuccess) {
           promise.success(future)
         } else {
           val exception = if (future.cause == null) {
-            new CanceledChannelFutureException(future)
+            new CanceledChannelTaskException(future)
               .fillInStackTrace()
           } else {
             future.cause

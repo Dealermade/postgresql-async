@@ -5,7 +5,7 @@ import org.mockito.Mockito.reset
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Task}
 import scala.util.Failure
 
 import scala.reflect.runtime.universe.TypeTag
@@ -62,7 +62,7 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
 
       var taken = Seq.empty[Widget]
       "can take up to maxObjects" in {
-        taken = Await.result(Future.sequence(for (i <- 1 to 5) yield p.take), Duration.Inf)
+        taken = Await.result(Task.sequence(for (i <- 1 to 5) yield p.take), Duration.Inf)
 
         taken must have size 5
         taken.head must not beNull;
@@ -79,7 +79,7 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
 
       reset(factory) // Considered bad form, but necessary as we depend on previous state in these tests
       "takes maxObjects back" in {
-        val returns = Await.result(Future.sequence(for (widget <- taken) yield p.giveBack(widget)), Duration.Inf)
+        val returns = Await.result(Task.sequence(for (widget <- taken) yield p.giveBack(widget)), Duration.Inf)
 
         returns must have size 5
 
@@ -91,9 +91,9 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
       }
 
       "protest returning an item that was already returned" in {
-        val resultFuture = p.giveBack(taken.head)
+        val resultTask = p.giveBack(taken.head)
 
-        Await.result(resultFuture, Duration.Inf) must throwAn[IllegalStateException]
+        Await.result(resultTask, Duration.Inf) must throwAn[IllegalStateException]
       }
 
       "destroy down to maxIdle widgets" in {
@@ -105,19 +105,19 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
     "queue requests after running out" in {
       val p = pool(conf = PoolConfiguration.Default.copy(maxObjects = 2, maxQueueSize = 1))
 
-      val widgets = Await.result(Future.sequence(for (i <- 1 to 2) yield p.take), Duration.Inf)
+      val widgets = Await.result(Task.sequence(for (i <- 1 to 2) yield p.take), Duration.Inf)
 
       val future = p.take
 
       // Wait five seconds
       Thread.sleep(5000)
 
-      val failedFuture = p.take
+      val failedTask = p.take
 
       // Cannot be done, would exceed maxObjects
       future.isCompleted must beFalse
 
-      Await.result(failedFuture, Duration.Inf) must throwA[PoolExhaustedException]
+      Await.result(failedTask, Duration.Inf) must throwA[PoolExhaustedException]
 
       Await.result(p.giveBack(widgets.head), Duration.Inf) must be(p)
 

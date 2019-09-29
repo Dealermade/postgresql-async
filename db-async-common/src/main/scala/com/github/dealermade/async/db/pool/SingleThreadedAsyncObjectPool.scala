@@ -22,8 +22,10 @@ import com.github.dealermade.async.db.util.{Log, Worker}
 import java.util.concurrent.atomic.AtomicLong
 import java.util.{Timer, TimerTask}
 
+import zio.Task
+
 import scala.collection.mutable.{ArrayBuffer, Queue}
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{Promise, Task}
 import scala.util.{Failure, Success}
 
 object SingleThreadedAsyncObjectPool {
@@ -68,7 +70,7 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T], configuration:
     *
     * @return
     */
-  def take: Future[T] = {
+  def take: Task[T] = {
 
     if (this.closed) {
       return Promise.failed(new PoolAlreadyTerminatedException).future
@@ -87,7 +89,7 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T], configuration:
     * @param item
     * @return
     */
-  def giveBack(item: T): Future[AsyncObjectPool[T]] = {
+  def giveBack(item: T): Task[AsyncObjectPool[T]] = {
     val promise = Promise[AsyncObjectPool[T]]()
     this.mainPool.action {
       // Ensure it came from this pool
@@ -123,7 +125,7 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T], configuration:
 
   def isFull: Boolean = this.poolables.isEmpty && this.checkouts.size == configuration.maxObjects
 
-  def close: Future[AsyncObjectPool[T]] = {
+  def close: Task[AsyncObjectPool[T]] = {
     try {
       val promise = Promise[AsyncObjectPool[T]]()
       this.mainPool.action {
@@ -145,7 +147,7 @@ class SingleThreadedAsyncObjectPool[T](factory: ObjectFactory[T], configuration:
       promise.future
     } catch {
       case e: RejectedExecutionException if this.closed =>
-        Future.successful(this)
+        Task.succeed(this)
     }
   }
 

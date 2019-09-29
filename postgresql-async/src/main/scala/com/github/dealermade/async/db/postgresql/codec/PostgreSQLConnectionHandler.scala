@@ -22,7 +22,7 @@ import com.github.dealermade.async.db.column.{ColumnDecoderRegistry, ColumnEncod
 import com.github.dealermade.async.db.postgresql.exceptions._
 import com.github.dealermade.async.db.postgresql.messages.backend._
 import com.github.dealermade.async.db.postgresql.messages.frontend._
-import com.github.dealermade.async.db.util.ChannelFutureTransformer.toFuture
+import com.github.dealermade.async.db.util.ChannelTaskTransformer.toTask
 import com.github.dealermade.async.db.util._
 import java.net.InetSocketAddress
 import scala.annotation.switch
@@ -41,7 +41,7 @@ import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.CodecException
 import io.netty.handler.ssl.{SslContextBuilder, SslHandler}
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory
-import io.netty.util.concurrent.FutureListener
+import io.netty.util.concurrent.TaskListener
 import javax.net.ssl.{SSLParameters, TrustManagerFactory}
 import java.security.KeyStore
 import java.io.FileInputStream
@@ -71,13 +71,13 @@ class PostgreSQLConnectionHandler(
 
   private implicit final val _executionContext = executionContext
   private final val bootstrap = new Bootstrap()
-  private final val connectionFuture = Promise[PostgreSQLConnectionHandler]()
+  private final val connectionTask = Promise[PostgreSQLConnectionHandler]()
   private final val disconnectionPromise = Promise[PostgreSQLConnectionHandler]()
   private var processData: ProcessData = null
 
   private var currentContext: ChannelHandlerContext = null
 
-  def connect: Future[PostgreSQLConnectionHandler] = {
+  def connect: Task[PostgreSQLConnectionHandler] = {
     this.bootstrap.group(this.group)
     this.bootstrap.channel(classOf[NioSocketChannel])
     this.bootstrap.handler(new ChannelInitializer[channel.Channel]() {
@@ -96,19 +96,19 @@ class PostgreSQLConnectionHandler(
     this.bootstrap.option(ChannelOption.ALLOCATOR, configuration.allocator)
 
     this.bootstrap.connect(new InetSocketAddress(configuration.host, configuration.port)).onFailure {
-      case e => connectionFuture.tryFailure(e)
+      case e => connectionTask.tryFailure(e)
     }
 
-    this.connectionFuture.future
+    this.connectionTask.future
   }
 
-  def disconnect: Future[PostgreSQLConnectionHandler] = {
+  def disconnect: Task[PostgreSQLConnectionHandler] = {
 
     if (this.isConnected) {
       this.currentContext.channel.writeAndFlush(CloseMessage).onComplete {
-        case Success(writeFuture) =>
-          writeFuture.channel.close().onComplete {
-            case Success(closeFuture) => this.disconnectionPromise.trySuccess(this)
+        case Success(writeTask) =>
+          writeTask.channel.close().onComplete {
+            case Success(closeTask) => this.disconnectionPromise.trySuccess(this)
             case Failure(e)           => this.disconnectionPromise.tryFailure(e)
           }
         case Failure(e) => this.disconnectionPromise.tryFailure(e)
@@ -167,8 +167,8 @@ class PostgreSQLConnectionHandler(
           }
           val handler = new SslHandler(sslEngine)
           ctx.pipeline().addFirst(handler)
-          handler.handshakeFuture.addListener(new FutureListener[channel.Channel]() {
-            def operationComplete(future: io.netty.util.concurrent.Future[channel.Channel]) {
+          handler.handshakeTask.addListener(new TaskListener[channel.Channel]() {
+            def operationComplete(future: io.netty.util.concurrent.Task[channel.Channel]) {
               if (future.isSuccess()) {
                 ctx.writeAndFlush(new StartupMessage(properties))
               } else {

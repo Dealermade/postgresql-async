@@ -71,7 +71,7 @@ class PostgreSQLConnection(
   private val parsedStatements = new scala.collection.mutable.HashMap[String, PreparedStatementHolder]()
   private var authenticated = false
 
-  private val connectionFuture = Promise[Connection]()
+  private val connectionTask = Promise[Connection]()
 
   private var recentError = false
   private val queryPromiseReference = new AtomicReference[Option[Promise[QueryResult]]](None)
@@ -85,27 +85,27 @@ class PostgreSQLConnection(
   override def eventLoopGroup: EventLoopGroup = group
   def isReadyForQuery: Boolean = this.queryPromise.isEmpty
 
-  def connect: Future[Connection] = {
+  def connect: Task[Connection] = {
     this.connectionHandler.connect.onFailure {
-      case e => this.connectionFuture.tryFailure(e)
+      case e => this.connectionTask.tryFailure(e)
     }
 
-    this.connectionFuture.future.flatMap { c ⇒
+    this.connectionTask.future.flatMap { c ⇒
       configuration.currentSchema match {
         case Some(cs) ⇒ c.sendQuery(s"SET search_path TO $cs;").map(_ ⇒ c)
-        case _ ⇒ Future.successful(c)
+        case _ ⇒ Task.succeed(c)
       }
     }
   }
 
-  override def disconnect: Future[Connection] = this.connectionHandler.disconnect.map(c => this)
+  override def disconnect: Task[Connection] = this.connectionHandler.disconnect.map(c => this)
   override def onTimeout = disconnect
 
   override def isConnected: Boolean = this.connectionHandler.isConnected
 
   def parameterStatuses: scala.collection.immutable.Map[String, String] = this.parameterStatus.toMap
 
-  override def sendQuery(query: String): Future[QueryResult] = {
+  override def sendQuery(query: String): Task[QueryResult] = {
     validateQuery(query)
 
     val promise = Promise[QueryResult]()
@@ -116,7 +116,7 @@ class PostgreSQLConnection(
     promise.future
   }
 
-  override def sendPreparedStatement(query: String, values: Seq[Any] = List()): Future[QueryResult] = {
+  override def sendPreparedStatement(query: String, values: Seq[Any] = List()): Task[QueryResult] = {
     validateQuery(query)
 
     val promise = Promise[QueryResult]()
@@ -158,18 +158,18 @@ class PostgreSQLConnection(
   }
 
   override def onError(exception: Throwable) {
-    this.setErrorOnFutures(exception)
+    this.setErrorOnTasks(exception)
   }
 
   def hasRecentError: Boolean = this.recentError
 
-  private def setErrorOnFutures(e: Throwable) {
+  private def setErrorOnTasks(e: Throwable) {
     this.recentError = true
 
     log.error("Error on connection", e)
 
-    if (!this.connectionFuture.isCompleted) {
-      this.connectionFuture.failure(e)
+    if (!this.connectionTask.isCompleted) {
+      this.connectionTask.failure(e)
       this.disconnect
     }
 
@@ -179,7 +179,7 @@ class PostgreSQLConnection(
   }
 
   override def onReadyForQuery() {
-    this.connectionFuture.trySuccess(this)
+    this.connectionTask.trySuccess(this)
 
     this.recentError = false
     queryResult.foreach(this.succeedQueryPromise)
@@ -191,7 +191,7 @@ class PostgreSQLConnection(
     val error = new GenericDatabaseException(m)
     error.fillInStackTrace()
 
-    this.setErrorOnFutures(error)
+    this.setErrorOnTasks(error)
   }
 
   override def onCommandComplete(m: CommandCompleteMessage) {

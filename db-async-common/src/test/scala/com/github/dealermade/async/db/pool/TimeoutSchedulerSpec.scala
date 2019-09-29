@@ -15,12 +15,12 @@
  */
 package com.github.dealermade.async.db.pool
 
-import java.util.concurrent.{ScheduledFuture, TimeoutException}
+import java.util.concurrent.{ScheduledTask, TimeoutException}
 import com.github.dealermade.async.db.util.{ByteBufferUtils, ExecutorServiceUtils}
 import org.specs2.mutable.SpecificationWithJUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{Task, Promise}
 
 /**
   * Tests for TimeoutScheduler
@@ -32,13 +32,13 @@ class TimeoutSchedulerSpec extends SpecificationWithJUnit {
   "test timeout did not pass" in {
     val timeoutScheduler = new DummyTimeoutScheduler()
     val promise = Promise[String]()
-    val scheduledFuture = timeoutScheduler.addTimeout(promise, Some(Duration(1000, MILLISECONDS)))
+    val scheduledTask = timeoutScheduler.addTimeout(promise, Some(Duration(1000, MILLISECONDS)))
     Thread.sleep(100);
     promise.isCompleted === false
     promise.success(TIMEOUT_DID_NOT_PASS)
     Thread.sleep(1500)
     promise.future.value.get.get === TIMEOUT_DID_NOT_PASS
-    scheduledFuture.get.isCancelled === true
+    scheduledTask.get.isCancelled === true
     timeoutScheduler.timeoutCount === 0
   }
 
@@ -46,10 +46,10 @@ class TimeoutSchedulerSpec extends SpecificationWithJUnit {
     val timeoutMillis = 100
     val promise = Promise[String]()
     val timeoutScheduler = new DummyTimeoutScheduler()
-    val scheduledFuture = timeoutScheduler.addTimeout(promise, Some(Duration(timeoutMillis, MILLISECONDS)))
+    val scheduledTask = timeoutScheduler.addTimeout(promise, Some(Duration(timeoutMillis, MILLISECONDS)))
     Thread.sleep(1000)
     promise.isCompleted === true
-    scheduledFuture.get.isCancelled === false
+    scheduledTask.get.isCancelled === false
     promise.trySuccess(TIMEOUT_DID_NOT_PASS)
     timeoutScheduler.timeoutCount === 1
     promise.future.value.get.get must throwA[TimeoutException](
@@ -59,9 +59,9 @@ class TimeoutSchedulerSpec extends SpecificationWithJUnit {
   "test no timeout" in {
     val timeoutScheduler = new DummyTimeoutScheduler()
     val promise = Promise[String]()
-    val scheduledFuture = timeoutScheduler.addTimeout(promise, None)
+    val scheduledTask = timeoutScheduler.addTimeout(promise, None)
     Thread.sleep(1000)
-    scheduledFuture === None
+    scheduledTask === None
     promise.isCompleted === false
     promise.success(TIMEOUT_DID_NOT_PASS)
     promise.future.value.get.get === TIMEOUT_DID_NOT_PASS

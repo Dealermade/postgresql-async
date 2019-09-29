@@ -16,7 +16,7 @@
 
 package com.github.dealermade.async.db
 
-import concurrent.Future
+import concurrent.Task
 
 /**
   *
@@ -31,7 +31,7 @@ import concurrent.Future
   *
   * {{{
   *   val handler: Connection = ...
-  *   val result: Future[QueryResult] = handler.connect
+  *   val result: Task[QueryResult] = handler.connect
   *     .map(parameters => handler)
   *     .flatMap(connection => connection.sendQuery("BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ"))
   *     .flatMap(query => handler.sendQuery("SELECT 0"))
@@ -50,7 +50,7 @@ trait Connection {
     *
     * @return
     */
-  def disconnect: Future[Connection]
+  def disconnect: Task[Connection]
 
   /**
     *
@@ -59,7 +59,7 @@ trait Connection {
     *
     * @return
     */
-  def connect: Future[Connection]
+  def connect: Task[Connection]
 
   /**
     *
@@ -77,7 +77,7 @@ trait Connection {
     * @param query
     * @return
     */
-  def sendQuery(query: String): Future[QueryResult]
+  def sendQuery(query: String): Task[QueryResult]
 
   /**
     *
@@ -107,7 +107,7 @@ trait Connection {
     * @param values
     * @return
     */
-  def sendPreparedStatement(query: String, values: Seq[Any] = List()): Future[QueryResult]
+  def sendPreparedStatement(query: String, values: Seq[Any] = List()): Task[QueryResult]
 
   /**
     *
@@ -117,7 +117,7 @@ trait Connection {
     * @param f operation to execute on this connection
     * @return result of f, conditional on transaction operations succeeding
     */
-  def inTransaction[A](f: Connection => Future[A])(implicit executionContext: scala.concurrent.ExecutionContext): Future[A] = {
+  def inTransaction[A](f: Connection => Task[A])(implicit executionContext: scala.concurrent.ExecutionContext): Task[A] = {
     this.sendQuery("BEGIN").flatMap { _ =>
       val p = scala.concurrent.Promise[A]()
       f(this).onComplete { r =>
