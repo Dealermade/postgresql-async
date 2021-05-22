@@ -28,7 +28,7 @@ lazy val postgresql = (project in file(postgresqlName))
   )
   .dependsOn(common)
 
-val commonVersion = "0.3.9"
+val commonVersion = "0.3.10"
 val specs2Version = "4.5.1"
 
 val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % "test"
@@ -37,11 +37,11 @@ val specs2MockDependency = "org.specs2" %% "specs2-mock" % specs2Version % "test
 val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
 
 val commonDependencies = Seq(
-  "org.slf4j" % "slf4j-api" % "1.7.26",
-  "joda-time" % "joda-time" % "2.10.2",
+  "org.slf4j" % "slf4j-api" % "1.7.30",
+  "joda-time" % "joda-time" % "2.10.10",
   "org.joda" % "joda-convert" % "2.2.1",
-  "io.netty" % "netty-all" % "4.1.36.Final",
-  "org.javassist" % "javassist" % "3.25.0-GA",
+  "io.netty" % "netty-all" % "4.1.63.Final",
+  "org.javassist" % "javassist" % "3.28.0-GA",
   specs2Dependency,
   specs2JunitDependency,
   specs2MockDependency,
@@ -54,7 +54,7 @@ val implementationDependencies = Seq(
 )
 
 lazy val baseSettings = Seq(
-  scalaVersion := "2.12.8",
+  scalaVersion := "2.12.13",
   scalacOptions :=
     Opts.compile.encoding("UTF8")
       :+ Opts.compile.deprecation

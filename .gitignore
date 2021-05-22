@@ -22,3 +22,7 @@ db-async-common/target/*
 vendor/*
 .DS_Store
 .hydra
+
+.bsp
+
+.bloop

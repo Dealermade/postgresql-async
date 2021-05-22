@@ -2,7 +2,7 @@ language: scala
 sudo: required
 
 scala:
-  - 2.12.8
+  - 2.12.13
 
 jdk:
   - oraclejdk8
